@@ -12,14 +12,23 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('vand.png') no-repeat;
+    background: color (whitesmoke);
+    background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
 }
 
+.logo {
+    position: absolute;
+    top: 1%;
+    left: 1%;
+    height: 40px;
+    width: 120px;
+}
+
 .rammeLogin {
     width: 420px;
-    background: transparent;
+    background: #bed6db;
     border: 2px solid lightslategray;
     backdrop-filter: blur(20px);
     box-shadow: 0 0 10px black;
@@ -31,8 +40,9 @@ body {
 .rammeLogin h1 {
     font-size: 36px;
     text-align: center;
-    color: black;
+    color: white;
 }
+
 
 .rammeLogin .inputBox {
     width: 100%;
