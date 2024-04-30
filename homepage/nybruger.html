@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="nybruger.css">
+    <title>Ny Bruger</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Ny Bruger</h1>
+        <div id="form-container">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            
+            <label for="password">Adgangskode:</label>
+            <input type="password" id="password" required>
+            
+            <label for="confirmPassword">Bekræft Adgangskode:</label>
+            <input type="password" id="confirmPassword" required>
+
+            <div class="login"></div>
+                <a href="Login.html">Login</a>
+            </div>
+            
+            <button onclick="checkPassword()">Godkend</button>
+            
+            <p id="result"></p>
+        </div>
+    </div>
+    <script src="nybruger.js"></script>
+</body>
+</html>

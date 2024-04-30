@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tilføj en ny enhed</title>
+    <link rel="stylesheet" href="enhed.css">
+</head>
+<body>
+
+    <div class="box">
+        <div class="overskrift">
+            <h1>Tilføj ny enhed her:</h1>
+        </div>
+        
+        <form id="myForm" autocomplete="off" autocapitalize="none">
+            <div class="center-frame">
+                <label for="device_id">Enheds ID:</label><br>
+                <input type="text" id="device_id" name="device_id"><br>
+                <label for="placement">Enheds placering:</label><br>
+                <input type="text" id="placement" name="placement"><br>
+                <button class="btn" id="saveBtn" onclick="saveDevice()">Gem</button>
+            </div>
+        </form>
+        
+        <div id="message"></div>
+    </div>    
+    <div class="dropdown" style="float: right;">
+        <button class="dropbtn">&#9776;</button>
+        <div class="dropdown-content">
+            <a href="forside.html">Forside</a>
+            <a href="dinData.html">Din data</a> 
+            <a href="enhed.html">Tilføj enhed</a>
+            <a href="about.html">About</a>
+    </div>
+    </div>
+    <script src="enhed.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</body>
+</html>

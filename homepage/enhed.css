@@ -1,0 +1,104 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: url(baggrund.png);
+    background-size: cover;
+    background-position: center;
+}
+
+.overskrift h1 {
+    color: black;
+    text-align: center;
+    margin-left: auto;
+    margin-right: 50px;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    padding: 30px 40px;
+    margin-left: 525px;
+    border-radius: 10px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px black;
+    width: 500px;
+}
+
+.center-frame {
+    text-align: center;
+    margin: 10px;
+}
+
+#saveBtn {
+    font-size: 13px;
+    padding: 5px;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px black;
+}
+
+#device_id, #placement {
+    font-size: 12px;
+    padding: 3px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+/* position på menu knap */
+.dropdown {
+    position: fixed;
+    top: 20px; /* Justér top-positionen efter dit design */
+    right: 20px;
+}
+
+/* Stil for knappen */
+.dropbtn {
+    background-color: gray;
+    color: black;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px; box-shadow: 0 0 10px black;
+    width: 150px;
+    
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: transparent;
+    border: 2px solid lightslategray;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px black;
+    color: black;
+    border-radius: 10px;
+    padding: 30px 40px;
+    width: max-content; /* justere brede på kassen under menu */
+    text-align: center; /* center tekst i menu */
+    left: 50%; /*centrer kassen under knappen */
+    transform: translateX(-50%); /* centrer kassen under knappen */
+    
+}
+
+/* Links i dropdown-menuen */
+.dropdown-content a {
+    color: black;
+    padding: 12px 0px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Vis dropdown-indholdet ved hover eller klik */
+.dropdown:hover .dropdown-content {
+  display: block;
+}

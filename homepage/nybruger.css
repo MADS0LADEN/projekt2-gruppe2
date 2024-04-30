@@ -1,0 +1,99 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url(vand.png) no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    width: 420px;
+    background: transparent;
+    border: 2px solid lightslategray;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px black;
+    color: black;
+    border-radius: 10px;
+    padding: 30px 40px;
+    text-align: center;
+
+}
+
+#form-container {
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: center;
+    
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input {
+    width: 100%;
+    height: 100%;
+    padding: 20px 45px 20px 20px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid gray;
+    border-radius: 40px;
+    color: black;
+}
+
+button {
+    width: 100%;
+    height: 45px;
+    margin-bottom: 5px;
+    background: whitesmoke;
+    border: none;
+    outline: none;
+    border-radius: 40px; /* laver bue på boksen */
+    box-shadow: 0 0 10px black;
+    cursor: pointer;
+    font-size: 16px;
+    color: grey;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: blue;
+    color:white;
+}
+
+#result {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.login {
+    text-align: center;
+    margin-bottom: 15px;
+    align-content: space-around;    
+}
+
+.login a {
+    font-size: 14.5px;
+    color: black;
+    text-decoration: none;
+}
+
+.login a:hover {
+    text-decoration: underline;
+}
