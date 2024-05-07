@@ -40,4 +40,3 @@ while True:
                 last_uid = raw_uid
     except KeyboardInterrupt:
         break
-
