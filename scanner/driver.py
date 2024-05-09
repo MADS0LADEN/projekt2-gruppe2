@@ -26,41 +26,39 @@ Driver class for the MFRC522 board.  RF tag reader and writer.
 
 * Author(s): Kevin Thomas
 """
-from machine import Pin, SPI
-from os import uname
 
 __version__ = "1.0.0"
 __repo__ = "https://github.com/mytechnotalent/MicroPython_MFRC522.git"
 
-MAX_LEN                            = 16
-CALCULATE_CRC                    = 0x03
-ANTICOLL                        = 0x93
-SELECT_TAG                        = 0x93
-TRANSCEIVE                        = 0x0C
-AUTHENTICATE                    = 0x0E
-READ                            = 0x30
-WRITE                            = 0xA0
+MAX_LEN = 16
+CALCULATE_CRC = 0x03
+ANTICOLL = 0x93
+SELECT_TAG = 0x93
+TRANSCEIVE = 0x0C
+AUTHENTICATE = 0x0E
+READ = 0x30
+WRITE = 0xA0
 
-MFRC522_COMMAND_REG                = 0x01
-MFRC522_COML_EN_REG                = 0x02
-MFRC522_DIVL_EN_REG                = 0x03
-MFRC522_COM_IRQ_REG                = 0x04
-MFRC522_DIV_IRQ_REG                = 0x05
-MFRC522_ERROR_REG                = 0x06
-MFRC522_STATUS_2_REG            = 0x08
-MFRC522_FIFO_DATA_REG            = 0x09
-MFRC522_FIFO_LEVEL_REG            = 0x0A
-MFRC522_CONTROL_REG             = 0x0C
-MFRC522_BIT_FRAMING_REG         = 0x0D
-MFRC522_MODE_REG                = 0x11
-MFRC522_TX_CONTROL_REG            = 0x14
-MFRC522_TX_AUTO_REG                = 0x15
-MFRC522_CRC_RESULT_REG_H        = 0x21
-MFRC522_CRC_RESULT_REG_L        = 0x22
-MFRC522_T_MODE_REG                 = 0x2A
-MFRC522_T_PRESCALAR_REG         = 0x2B
-MFRC522_T_RELOAD_REG_H            = 0x2C
-MFRC522_T_RELOAD_REG_L            = 0x2D
+MFRC522_COMMAND_REG = 0x01
+MFRC522_COML_EN_REG = 0x02
+MFRC522_DIVL_EN_REG = 0x03
+MFRC522_COM_IRQ_REG = 0x04
+MFRC522_DIV_IRQ_REG = 0x05
+MFRC522_ERROR_REG = 0x06
+MFRC522_STATUS_2_REG = 0x08
+MFRC522_FIFO_DATA_REG = 0x09
+MFRC522_FIFO_LEVEL_REG = 0x0A
+MFRC522_CONTROL_REG = 0x0C
+MFRC522_BIT_FRAMING_REG = 0x0D
+MFRC522_MODE_REG = 0x11
+MFRC522_TX_CONTROL_REG = 0x14
+MFRC522_TX_AUTO_REG = 0x15
+MFRC522_CRC_RESULT_REG_H = 0x21
+MFRC522_CRC_RESULT_REG_L = 0x22
+MFRC522_T_MODE_REG = 0x2A
+MFRC522_T_PRESCALAR_REG = 0x2B
+MFRC522_T_RELOAD_REG_H = 0x2C
+MFRC522_T_RELOAD_REG_L = 0x2D
 
 
 class MFRC522:
@@ -82,12 +80,12 @@ class MFRC522:
     # combine_register_values(self, temp_h, temp_l)
         # Combine reg values
     """
-    OK                             = 0
-    NO_TAG_ERR                     = 1
-    ERR                         = 2
-    CARD_REQIDL                    = 0x26
-    AUTH                         = 0x60
-    
+
+    OK = 0
+    NO_TAG_ERR = 1
+    ERR = 2
+    CARD_REQIDL = 0x26
+    AUTH = 0x60
 
     def __init__(self, spi, cs):
         """
@@ -119,8 +117,8 @@ class MFRC522:
         None
         """
         self.cs.value(0)
-        self.spi.write(b'%c' % int(0xff & ((reg << 1) & 0x7e)))
-        self.spi.write(b'%c' % int(0xff & val))
+        self.spi.write(b"%c" % int(0xFF & ((reg << 1) & 0x7E)))
+        self.spi.write(b"%c" % int(0xFF & val))
         self.cs.value(1)
 
     def _read_reg(self, reg):
@@ -136,7 +134,7 @@ class MFRC522:
         None
         """
         self.cs.value(0)
-        self.spi.write(b'%c' % int(0xff & (((reg << 1) & 0x7e) | 0x80)))
+        self.spi.write(b"%c" % int(0xFF & (((reg << 1) & 0x7E) | 0x80)))
         val = self.spi.read(1)
         self.cs.value(1)
         return val[0]
@@ -259,7 +257,10 @@ class MFRC522:
             i -= 1
             if not ((i != 0) and not (n & MFRC522_COM_IRQ_REG)):
                 break
-        return [self._read_reg(MFRC522_CRC_RESULT_REG_L), self._read_reg(MFRC522_CRC_RESULT_REG_H)]
+        return [
+            self._read_reg(MFRC522_CRC_RESULT_REG_L),
+            self._read_reg(MFRC522_CRC_RESULT_REG_H),
+        ]
 
     def init(self):
         """
@@ -446,6 +447,10 @@ class MFRC522:
                 buffer.append(data[i])
             buffer += self._calculate_crc(buffer)
             (status, recv, bits) = self._tocard(TRANSCEIVE, buffer)
-            if not (status == self.OK) or not (bits == 4) or not ((recv[0] & 0x0F) == 0x0A):
+            if (
+                not (status == self.OK)
+                or not (bits == 4)
+                or not ((recv[0] & 0x0F) == 0x0A)
+            ):
                 status = self.ERR
         return status
