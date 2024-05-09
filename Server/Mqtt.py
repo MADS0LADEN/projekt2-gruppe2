@@ -3,9 +3,8 @@ import paho.mqtt.client as mqtt
 class modtageData:
     def __init__(self):
         self.data = None
-        self.mqtt_broker = "192.168.15.24" #adressen på brokeren
+        self.mqtt_broker = "0.0.0.0" #0.0.0.0 gør den kan modtage beskeder på alle interfaces
         self.mqtt_port = 1883
-
 
     def start_server(self):
         # Denne funktion udføres, når der modtages en besked fra brokeren
@@ -13,7 +12,6 @@ class modtageData:
             print(f"Modtaget besked på emne '{message.topic}': {str(message.payload.decode('utf-8'))}")
 
         # Opret en MQTT-klient og tilslut til brokeren
-        print("Hej")
         client = mqtt.Client()
         client.connect(self.mqtt_broker, self.mqtt_port)
 
@@ -28,3 +26,4 @@ class modtageData:
         client.loop_forever()
 
 class sendeData:
+    pass
