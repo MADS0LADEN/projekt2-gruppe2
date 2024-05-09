@@ -1,40 +1,24 @@
-import paho.mqtt.client as mqtt 
-#import pymysql.cursors
-import sys, datetime, json
+import paho.mqtt.client as mqtt
 
-def insert_into_sql(enheds_id,data):
-    pass
-
-def on_connect(client,rc):
-    client.subscribe("Test")
-    if rc == 0:
-        pass
-    else:
-        print(f"Connected with result code {rc}")
-    pass
-
-def on_message(client,msg):
-    try:
-        print(f"Modtaget besked på emne {msg.topic}: {msg.payload.decode()}")
-
-        enheds_id = msg.topic #Enheds id aka hvor kommer dataen fra
-        data = json.loads(msg.payload) #Elevnummer
-        print(f"Modtaget JSON-data: {data}")
-
-        insert_into_sql(enheds_id,data)
-        print("Data indsat i MySQL-database.")      
-    except Exception as e:
-        print(f"Fejl ved behandling af besked: {e}")
-
-# MQTT-brokerkonfiguration
-mqtt_broker = "192.168.0.123"
+# Angiv MQTT-brokerens adresse
+mqtt_broker = "192.168.15.24"  # Du skal muligvis ændre dette til den faktiske adresse på din broker
 mqtt_port = 1883
 
-# Opret MQTT-klient
-client = mqtt.Client("server_subscriber")
-client.on_connect = on_connect
+# Denne funktion udføres, når der modtages en besked fra brokeren
+def on_message(client, userdata, message):
+    print(f"Modtaget besked på emne '{message.topic}': {str(message.payload.decode('utf-8'))}")
+
+# Opret en MQTT-klient og tilslut til brokeren
+print("Hej")
+client = mqtt.Client()
+client.connect(mqtt_broker, mqtt_port)
+
+# Angiv funktionen til at håndtere modtagelse af beskeder
 client.on_message = on_message
 
-# Opret forbindelse til MQTT-brokeren
-client.connect(mqtt_broker, mqtt_port)
+# Abonner på det ønskede emne
+client.subscribe("test")
+
+# Start loopet for at modtage beskeder
+print("Server startet")
 client.loop_forever()

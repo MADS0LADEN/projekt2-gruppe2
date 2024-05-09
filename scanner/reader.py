@@ -37,5 +37,6 @@ while True:
                         print("AUTH ERROR")
                 else:
                     print("FAILED TO SELECT TAG")
+                last_uid = raw_uid
     except KeyboardInterrupt:
         break

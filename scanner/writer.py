@@ -20,6 +20,8 @@ while True:
         (status, tag_type) = reader.request(reader.CARD_REQIDL)
         if status == reader.OK:
             (status, raw_uid) = reader.anticoll()
+            if raw_uid == last_uid:
+                continue
             if status == reader.OK:
                 print("New Card Detected")
                 print("  - Tag Type: 0x%02x" % tag_type)
@@ -31,12 +33,6 @@ while True:
                 if reader.select_tag(raw_uid) == reader.OK:
                     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
                     if reader.auth(reader.AUTH, 8, key, raw_uid) == reader.OK:
-                        # Write your unique address here
-                        if last_uid is raw_uid:
-                            print("Data Already Written To Card...")
-                            reader.stop_crypto1()
-                            sleep(1)
-                            continue
                         status = reader.write(
                             8,
                             b"\x08\x06\x07\x05\x03\x00\x09\x00\x00\x00\x00\x00\x00\x00\x06\x03",
