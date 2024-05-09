@@ -24,6 +24,7 @@ body {
     left: 0;
     width: 50%;
     height: 80px;
+    
     background: #004250;
     border: 2px  lightslategray;
     
@@ -48,7 +49,7 @@ body {
 
 .rammeLogin {
     width: 420px;
-    background: #fec97d;
+    background: #bed6db;    
     border: 2px solid lightslategray;
     backdrop-filter: blur(20px);
     box-shadow: 0 0 10px black;
