@@ -1,4 +1,4 @@
-from machine import Pin, SoftSPI
+from machine import Pin, SoftSPI, unique_id
 from driver import MFRC522
 from umqtt.simple import MQTTClient
 import network
@@ -57,11 +57,13 @@ while True:
                     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
                     if reader.auth(reader.AUTH, 8, key, raw_uid) == reader.OK:
                         card_id = ":".join('%02x' % byte for byte in raw_uid)
-                        print("Card ID:", card_id)
+                        device_id = unique_id()
+                        message = f'Card ID: {card_id}, Device ID: {device_id})'
+                        print(message)
                         reader.stop_crypto1()
-
+                        
                         # Send kort-ID'en via MQTT
-                        send_mqtt_message(card_id)
+                        send_mqtt_message(message)
                     else:
                         print("AUTH ERROR")
                 else:
