@@ -29,7 +29,7 @@ class ModtageData:
         client.loop_forever()
 
 class SendeData:
-    def __init__(self, host="host.docker.internal", user="root", password="Dboa24!", database="Projekt2"):
+    def __init__(self, host="host.docker.internal", user="root", password="Dboa24!!", database="Projekt2"):
         self.mydb = mysql.connector.connect(
             host=host,
             user=user,
@@ -39,8 +39,8 @@ class SendeData:
         self.mycursor = self.mydb.cursor()
     
     def senddata(self, data):
-        sql = "INSERT INTO Registeringer  (PersonID) VALUES (%s)"
-        val = (data,)
+        sql = "INSERT INTO Registreringer  (PersonID, KlasseID)  VALUES (%s, %s)"
+        val = (data, data)
         self.mycursor.execute(sql, val)
         self.mydb.commit()
         print(self.mycursor.rowcount, "record inserted.")
