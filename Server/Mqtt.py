@@ -27,18 +27,18 @@ class ModtageData:
         client.loop_forever()
 
 class SendeData:
-    def __init__(self, host, user, password, database):
+    def __init__(self, host="localhost:8081", user="root", password="Dboa24!", database="Projekt2"):
         self.mydb = mysql.connector.connect(
-            host=host, # Angiv IP-adressen for MySQL-serveren
-            user= "root",
-            password= "Dboa24!",
-            database=database # Angiv navnet på databasen
+            host=host,
+            user=user,
+            password=password,
+            database=database  # Angiv navnet på databasen
         )
     
     def send_data(self, data):
-        mycursor = self.mydb.cursor() # Opret en cursor til at udføre SQL-forespørgsler
+        mycursor = self.mydb.cursor()  # Opret en cursor til at udføre SQL-forespørgsler
 
-        sql = "INSERT INTO tablename (columname) VALUES (%s)"  # SQL-forespørgsel til at indsætte data i databasen
+        sql = "INSERT INTO Log (PersonID) VALUES (%s)"  # SQL-forespørgsel til at indsætte data i databasen
         val = (data, )  # Data, der skal indsættes i databasen
         mycursor.execute(sql, val)  # Udfør SQL-forespørgslen med de angivne værdier
 
