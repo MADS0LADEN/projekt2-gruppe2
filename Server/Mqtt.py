@@ -2,14 +2,16 @@ import paho.mqtt.client as mqtt  # Importer MQTT-klientbiblioteket
 import mysql.connector # Importer MySQL-klientbiblioteket
 
 class ModtageData:
-    def __init__(self):
-        self.data = None  # Initialiser dataattributten til None
-        self.mqtt_broker = "0.0.0.0"  # Angiv IP-adressen for MQTT-brokeren (0.0.0.0 gør den i stand til at modtage beskeder på alle interfaces)
+    def __init__(self, dataSender):
+        self.dataSender = SendeData()  # Initialiser dataattributten til None
+        self.mqtt_broker = "192.168.15.24"  # Angiv IP-adressen for MQTT-brokeren (0.0.0.0 gør den i stand til at modtage beskeder på alle interfaces)
         self.mqtt_port = 1883  # Angiv portnummeret for MQTT
 
     def startServer(self):
         # Denne funktion udføres, når der modtages en besked fra brokeren
         def on_message(client, userdata, message):
+            receivedData = message.payload.decode('utf-8')
+            self.dataSender.senddata(receivedData)
             print(f"Modtaget besked på emne '{message.topic}': {str(message.payload.decode('utf-8'))}")
 
         # Opret en MQTT-klient og forbind til brokeren
@@ -27,22 +29,23 @@ class ModtageData:
         client.loop_forever()
 
 class SendeData:
-    def __init__(self, host="localhost:8081", user="root", password="Dboa24!", database="Projekt2"):
+    def __init__(self, host="host.docker.internal", user="root", password="Dboa24!", database="Projekt2"):
         self.mydb = mysql.connector.connect(
             host=host,
             user=user,
             password=password,
             database=database  # Angiv navnet på databasen
         )
+        self.mycursor = self.mydb.cursor()
     
-    def send_data(self, data):
-        mycursor = self.mydb.cursor()  # Opret en cursor til at udføre SQL-forespørgsler
-
-        sql = "INSERT INTO Log (PersonID) VALUES (%s)"  # SQL-forespørgsel til at indsætte data i databasen
-        val = (data, )  # Data, der skal indsættes i databasen
-        mycursor.execute(sql, val)  # Udfør SQL-forespørgslen med de angivne værdier
-
-        self.mydb.commit()  # Bekræft ændringer i databasen
-
-        print(mycursor.rowcount, "record inserted.")  # Udskriv antallet af rækker indsat i databasen
+    def senddata(self, data):
+        sql = "INSERT INTO Registeringer  (PersonID) VALUES (%s)"
+        val = (data,)
+        self.mycursor.execute(sql, val)
+        self.mydb.commit()
+        print(self.mycursor.rowcount, "record inserted.")
         
+if __name__ == "__main__": 
+    sender = SendeData()
+    modtager = ModtageData(sender)
+    modtager.startServer()
