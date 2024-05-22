@@ -1,14 +1,11 @@
-from time import sleep
-
+from driver import MFRC522
 from machine import Pin, SoftSPI
 
-from driver import MFRC522
-
-sck = Pin(1, Pin.OUT)
-copi = Pin(2, Pin.OUT)  # Controller out, peripheral in
-cipo = Pin(3, Pin.OUT)  # Controller in, peripheral out
+sck = Pin(36, Pin.OUT)
+copi = Pin(35, Pin.OUT)  # Controller out, peripheral in
+cipo = Pin(37, Pin.OUT)  # Controller in, peripheral out
 spi = SoftSPI(baudrate=100000, polarity=0, phase=0, sck=sck, mosi=copi, miso=cipo)
-sda = Pin(4, Pin.OUT)
+sda = Pin(34, Pin.OUT)
 reader = MFRC522(spi, sda)
 
 print("Place Card In Front Of Device To Write Unique Address")
