@@ -1,7 +1,6 @@
-from machine import Pin, SoftSPI, unique_id
 from driver import MFRC522
+from machine import Pin, SoftSPI, unique_id
 from umqtt.simple import MQTTClient
-import network
 
 # Wi-Fi oplysninger
 WIFI_SSID = "Seans hotspot"
@@ -13,6 +12,7 @@ mqtt_port = 1883
 
 # Angiv emnet, du vil sende kort-ID'en til
 topic = "test"
+
 
 def send_mqtt_message(message):
     try:
@@ -33,15 +33,16 @@ def send_mqtt_message(message):
         if client:
             client.disconnect()
 
-sck = Pin(1, Pin.OUT)
-copi = Pin(2, Pin.OUT) # Controller out, peripheral in
-cipo = Pin(3, Pin.OUT) # Controller in, peripheral out
+
+sck = Pin(36, Pin.OUT)
+copi = Pin(35, Pin.OUT)  # Controller out, peripheral in
+cipo = Pin(37, Pin.OUT)  # Controller in, peripheral out
 spi = SoftSPI(baudrate=100000, polarity=0, phase=0, sck=sck, mosi=copi, miso=cipo)
-sda = Pin(4, Pin.OUT)
+sda = Pin(34, Pin.OUT)
 reader = MFRC522(spi, sda)
 
-print('Place Card In Front Of Device To Read Unique Address')
-print('')
+print("Place Card In Front Of Device To Read Unique Address")
+print("")
 
 while True:
     try:
@@ -49,19 +50,19 @@ while True:
         if status == reader.OK:
             (status, raw_uid) = reader.anticoll()
             if status == reader.OK:
-                print('New Card Detected')
-                print('  - Tag Type: 0x%02x' % tag_type)
-                print('  - uid:', ':'.join('%02x' % byte for byte in raw_uid))
-                print('')
+                print("New Card Detected")
+                print("  - Tag Type: 0x%02x" % tag_type)
+                print("  - uid:", ":".join("%02x" % byte for byte in raw_uid))
+                print("")
                 if reader.select_tag(raw_uid) == reader.OK:
                     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
                     if reader.auth(reader.AUTH, 8, key, raw_uid) == reader.OK:
-                        card_id = ":".join('%02x' % byte for byte in raw_uid)
+                        card_id = ":".join("%02x" % byte for byte in raw_uid)
                         device_id = unique_id()
-                        message = f'Card ID: {card_id}, Device ID: {device_id})'
+                        message = f"Card ID: {card_id}, Device ID: {device_id})"
                         print(message)
                         reader.stop_crypto1()
-                        
+
                         # Send kort-ID'en via MQTT
                         send_mqtt_message(message)
                     else:
@@ -70,4 +71,3 @@ while True:
                     print("FAILED TO SELECT TAG")
     except KeyboardInterrupt:
         break
-
