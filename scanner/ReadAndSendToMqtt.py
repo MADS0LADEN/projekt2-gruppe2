@@ -1,6 +1,7 @@
 from driver import MFRC522
 from machine import Pin, SoftSPI, unique_id
 from umqtt.simple import MQTTClient
+import ubinascii
 
 # Wi-Fi oplysninger
 WIFI_SSID = "Seans hotspot"
@@ -58,11 +59,10 @@ while True:
                     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
                     if reader.auth(reader.AUTH, 8, key, raw_uid) == reader.OK:
                         card_id = ":".join("%02x" % byte for byte in raw_uid)
-                        device_id = unique_id()
-                        message = f"Card ID: {card_id}, Device ID: {device_id})"
+                        device_id = ubinascii.hexlify(unique_id()).decode('utf-8')
+                        message = f"{card_id},{device_id}"
                         print(message)
                         reader.stop_crypto1()
-
                         # Send kort-ID'en via MQTT
                         send_mqtt_message(message)
                     else:
