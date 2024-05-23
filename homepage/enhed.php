@@ -14,10 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
 
     // Opret forbindelse til databasen
-    $servername = "79.171.148.172";
-    $username = "remote_vand";
-    $password_db = "Dboa24vand!";
-    $dbname = "vandlog";
+    $servername = "host.docker.internal";
+    $username = "root";
+    $password_db = "Dboa24!!";
+    $dbname = "Projekt2";
 
     $conn = new mysqli($servername, $username, $password_db, $dbname);
 
