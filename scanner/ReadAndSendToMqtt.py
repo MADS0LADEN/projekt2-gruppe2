@@ -1,8 +1,10 @@
+from time import sleep
+
+import net
+import ubinascii
 from driver import MFRC522
 from machine import Pin, SoftSPI, unique_id
 from umqtt.simple import MQTTClient
-import ubinascii, os
-import net
 
 # Angiv MQTT-brokerens adresse
 mqtt_broker = "adjms.sof60.dk"  # Du skal muligvis ændre dette til den faktiske adresse på din broker
@@ -11,30 +13,32 @@ mqtt_port = 1883
 # Angiv emnet, du vil sende kort-ID'en til
 topic = "test"
 
+
 def read_backup():
     file_path = "/data.txt"
     try:
         # Læs alle linjer fra filen
         with open(file_path, "r") as file:
             lines = file.readlines()
-        
+
         if not lines:
             return
-        
+
         # Den første linje i filen
         first_line = lines[0].strip()
-        
+
         # Forsøg at sende beskeden
         send_mqtt_message(first_line)
-        
+
         # Skriv de resterende linjer tilbage til filen
         with open(file_path, "w") as file:
             for line in lines[1:]:
                 file.write(line)
-        
+
     except Exception as e:
         # Håndter fejl
         print(f"An error occurred: {e}")
+
 
 def send_mqtt_message(message):
     try:
@@ -47,7 +51,7 @@ def send_mqtt_message(message):
         print("Besked sendt succesfuldt.")
         if client:
             client.disconnect()
-        
+
     except Exception as e:
         print("Fejl ved beskedsendelse:", e)
         print("Forsøger at skrive besked til data.txt")
@@ -58,13 +62,25 @@ def send_mqtt_message(message):
         except Exception as file_error:
             print("Fejl ved skrivning til fil:", file_error)
 
+
 sck = Pin(36, Pin.OUT)
 copi = Pin(35, Pin.OUT)  # Controller out, peripheral in
 cipo = Pin(37, Pin.OUT)  # Controller in, peripheral out
 spi = SoftSPI(baudrate=100000, polarity=0, phase=0, sck=sck, mosi=copi, miso=cipo)
 sda = Pin(34, Pin.OUT)
 reader = MFRC522(spi, sda)
-    
+
+green = Pin(6, Pin.OUT)
+yellow = Pin(7, Pin.OUT)
+red = Pin(8, Pin.OUT)
+
+
+def blink(color):
+    color.on()
+    sleep(1)
+    color.off()
+
+
 print("Place Card In Front Of Device To Read Unique Address")
 print("")
 
@@ -90,16 +106,19 @@ while True:
                     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
                     if reader.auth(reader.AUTH, 8, key, raw_uid) == reader.OK:
                         card_id = ":".join("%02x" % byte for byte in raw_uid)
-                        device_id = ubinascii.hexlify(unique_id()).decode('utf-8')
+                        device_id = ubinascii.hexlify(unique_id()).decode("utf-8")
                         message = f"{card_id},{device_id}"
                         print(message)
                         reader.stop_crypto1()
+                        blink(green)
                         # Send kort-ID'en via MQTT
                         send_mqtt_message(message)
                     else:
                         print("AUTH ERROR")
+                        blink(yellow)
                 else:
                     print("FAILED TO SELECT TAG")
+                    blink(red)
                 last_uid = raw_uid
     except KeyboardInterrupt:
         break

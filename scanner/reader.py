@@ -1,3 +1,5 @@
+from time import sleep
+
 from driver import MFRC522
 from machine import Pin, SoftSPI
 
@@ -7,6 +9,17 @@ cipo = Pin(37, Pin.OUT)  # Controller in, peripheral out
 spi = SoftSPI(baudrate=100000, polarity=0, phase=0, sck=sck, mosi=copi, miso=cipo)
 sda = Pin(34, Pin.OUT)
 reader = MFRC522(spi, sda)
+
+green = Pin(6, Pin.OUT)
+yellow = Pin(7, Pin.OUT)
+red = Pin(8, Pin.OUT)
+
+
+def blink(color):
+    color.on()
+    sleep(1)
+    color.off()
+
 
 print("Place Card In Front Of Device To Read Unique Address")
 print("")
