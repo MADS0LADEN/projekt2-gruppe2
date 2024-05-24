@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tilføj enhed</title>
-    <link rel="stylesheet" href="enhed.css">
+    <link rel="stylesheet" href="personer.css">
 </head>
 <body>
     <div class="logo">
@@ -20,9 +20,11 @@
         
         <form id="myForm" autocomplete="off" autocapitalize="none">
             <div class="center-frame">
-                <label for="device_id">Enheds ID:</label><br>
+                <label for="device_id">ID:</label><br>
                 <input type="text" id="device_id" name="device_id"><br>
-                <label for="placement">Klasse lokale:</label><br>
+                <label for="placement">Navn:</label><br>
+                <input type="text" id="placement" name="placement"><br>
+                <label for="placement">Kode:</label><br>
                 <input type="text" id="placement" name="placement"><br>
                 <button class="btn" id="saveBtn" onclick="saveDevice()">Gem</button>
             </div>
@@ -39,7 +41,7 @@
             
     </div>
     </div>
-    <script src="enhed.js"></script>
+    <script src="personer.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </body>
 </html>
