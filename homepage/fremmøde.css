@@ -1,0 +1,75 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #ecece7;
+}
+/* Tabellen */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+/* Zebra rækker */
+tr:nth-child(even) {background-color: #bed6db;}
+/* Tabel data*/
+td {
+    border: 1px solid #bed6db;
+    padding: 10px;
+    text-align: center;
+}
+/* Table header */
+th {
+    background-color: #004250;
+    color: #fec97d;
+    border: 1px solid #bed6db;
+    padding: 10px;
+    text-align: center;
+}
+/* Grønt flueben */
+.mødt {
+    color: green;
+    font-size: 1.5em;
+}
+/* Rødt kryds */
+.ikkemødt {
+    color: red;
+    font-size: 1.5em;
+}
+/* Knappen til Sortér efter mødt */
+.button {
+    position:absolute; 
+    top: 180px; 
+    right: 20px;
+}
+/* Kalender */
+#calendar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+/* Frem knap ved kalender */
+#nextBtn {
+    margin-left: 10px;
+}
+/* Tilbage knap ved kalender */
+#prevBtn {
+    margin-right: 10px;
+}
+/* Vælg klasse */
+#classPicker {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 2px;
+} 
+/* Vælg studerende */
+#studentPicker {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 2px;
+}
+/* Selve kalenderen */
+#datePicker {
+    margin-left: 5px;
+}

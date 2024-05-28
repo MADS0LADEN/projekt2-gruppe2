@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fremmøderegistrering på UCN</title>
+    <link rel="stylesheet" href="fremmøde.css">   
+
+</head>
+<body>
+
+    <h1>Fremmøderegistrering på UCN</h1>
+    
+    <!-- Tilføjet pile til navigation -->
+    <div id="calendar">
+      <button id="prevBtn">&lt;</button>
+      <label for="datePicker">Vælg dato:</label>
+      <input type="date" id="datePicker" onchange="loadTilstedeværelse()">
+      <button id="nextBtn">&gt;</button>
+    </div>
+    
+    <button onclick="sortTilstedeværelse()" class="button">Sortér efter mødt</button>
+    
+    <label for="classPicker">Vælg klasse:</label>
+    <select id="classPicker" onchange="loadTilstedeværelse()">
+        <option value="">Vælg klasse</option>
+        <option value="classA">Klasse A</option>
+        <option value="classB">Klasse B</option>
+    </select>
+
+    <label for="studentPicker">Vælg studerende:</label>
+    <select id="studentPicker" onchange="loadStudentAttendance(); updateSelectedStudentHeader()">
+      <option value="">Vælg studerende</option>
+        <!-- studerendeerne vil blive tilføjet her af JavaScript -->
+    </select>
+
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>Dato</th>
+                <th>Navn</th>
+                <th>Lokale</th>
+                <th>Status</th>
+                <th>Tidspunkt</th>
+            </tr>
+        </thead>
+        <tbody id="attendanceBody">
+            <!-- Data vil blive tilføjet her af JavaScript -->
+        </tbody>
+    </table>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="fremmøde.js"></script> 
+</body>
+</html>
