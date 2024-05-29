@@ -1,10 +1,11 @@
 function saveDevice() {
     var ID = document.getElementById("ID").value;
     var Navn = document.getElementById("Navn").value;
+    var HoldID = document.getElementById("HoldID").value;
     var Kode = document.getElementById("Kode").value;
 
     // Validér om nødvendige felter er udfyldt
-    if (ID === '' || Navn === '' || Kode === '') {
+    if (ID === '' || Navn === '') {
         document.getElementById("message").innerHTML = "Alle felter skal udfyldes";
         return;
     }
@@ -22,11 +23,12 @@ function saveDevice() {
             // Refresher inputfelterne
             document.getElementById("ID").value = "";
             document.getElementById("Navn").value = "";
+            document.getElementById("HoldID").value = "";
             document.getElementById("Kode").value = "";
         }
     };
 
     // Send data til serveren
-    var data = "ID=" + encodeURIComponent(ID) + "&Navn=" + encodeURIComponent(Navn) + "&Kode=" + encodeURIComponent(Kode);
+    var data = "ID=" + encodeURIComponent(ID) + "&Navn=" + encodeURIComponent(Navn) + "&HoldID=" + encodeURIComponent(HoldID) + "&Kode=" + encodeURIComponent(Kode);
     xhr.send(data);
 }

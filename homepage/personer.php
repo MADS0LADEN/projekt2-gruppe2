@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Hent enhedsoplysninger fra POST-anmodningen
     $ID = $_POST['ID'];
     $Navn = $_POST['Navn'];
+    $HoldID = $_POST['HoldID'];
     $Kode = $_SESSION['Kode'];
 
     // Opret forbindelse til databasen
@@ -28,10 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Undgå SQL-injektion
     $ID = $conn->real_escape_string($ID);
     $Navn = $conn->real_escape_string($Navn);
+    $HoldID = $conn->real_escape_string($HoldID);
     $Kode = $conn->real_escape_string($Kode);
 
     // Gem enhedsoplysninger i databasen
     $sql = "INSERT INTO Personer (PersonID, Navn, Kode) VALUES ('$ID', '$Navn', '$Kode')";
+    $sql = "INSERT INTO HoldID (HoldID) VALUES ('$HoldID')"
 
     if ($conn->query($sql) === TRUE) {
         echo "Enheden er blevet gemt.";
