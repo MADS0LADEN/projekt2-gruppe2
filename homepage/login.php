@@ -34,13 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Check the user's privileges and redirect them accordingly
             if ($_SESSION['Privilegier'] === NULL) {
-                echo "Elever kan ikke logge ind!"; // giver en fejl meddelelse hvis en elev prøver at logge ind
+                echo json_encode(["status" => "error", "message" => "Elever kan ikke logge ind!"]); // giver en fejl meddelelse hvis en elev prøver at logge ind
                 exit();
             } else if ($_SESSION['Privilegier'] == 0) {
-                header("Location: forsiden.html"); // Redirect to the homepage for teachers
+                echo json_encode(["status" => "success", "redirect" => "fremmøde.html"]); // Redirect to the homepage for teachers
                 exit();
             } else if ($_SESSION['Privilegier'] == 1) {
-                header("Location: admin_page.html"); // Redirect to the admin page
+                echo json_encode(["status" => "success", "redirect" => "adminpage.html"]); // Redirect to the admin page
                 exit();
             }
         } else {
