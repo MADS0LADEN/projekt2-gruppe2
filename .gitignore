@@ -1,2 +1,5 @@
 Server/certs/nginx-selfsigned.crt
 Server/certs/nginx-selfsigned.key
+Server/certs/accounts/acme-v02.api.letsencrypt.org/directory/31b570f679d57884292e7186764fc90a/regr.json
+Server/certs/accounts/acme-v02.api.letsencrypt.org/directory/31b570f679d57884292e7186764fc90a/private_key.json
+Server/certs/accounts/acme-v02.api.letsencrypt.org/directory/31b570f679d57884292e7186764fc90a/meta.json
