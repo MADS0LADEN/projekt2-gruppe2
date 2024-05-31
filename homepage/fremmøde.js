@@ -1,67 +1,33 @@
-// Foruddefinerede fremmødedata for forskellige klasser og datoer
-const classData = {
-    classA: {
-        students: [
-            {name: "Anna Hansen", lokale: "101"},
-            {name: "Peter Jensen", lokale: "101"},
-            {name: "Lise Sørensen", lokale: "101"},
-            {name: "Mads Nielsen", lokale: "101"}
-        ],
-        attendance: {
-            "2024-05-21": {
-                "Anna Hansen": {status: "mødt", time: "08:15", lokale: "101"},
-                "Peter Jensen": {status: "mødt", time: "08:17", lokale: "101"},
-                "Lise Sørensen": {status: "ikkemødt", time: "", lokale: "101"},
-                "Mads Nielsen": {status: "mødt", time: "08:20", lokale: "101"}
-            },
-            "2024-05-22": {
-                "Anna Hansen": {status: "mødt", time: "08:10", lokale: "101"},
-                "Peter Jensen": {status: "ikkemødt", time: "", lokale: "101"},
-                "Lise Sørensen": {status: "mødt", time: "08:30", lokale: "101"},
-                "Mads Nielsen": {status: "mødt", time: "08:25", lokale: "101"}
-            }
-        }
+$.ajax({
+    url: 'fremmøde.php',
+    type: 'GET',
+    dataType: 'json',
+    success: function(data) {
+      var tableBody = $('#FremmødeBody');
+      tableBody.empty();
+      data.forEach(function(item) {
+        var row = $('<tr>');
+        row.append($('<td>').text(item.Dato));
+        row.append($('<td>').text(item.Navn));
+        row.append($('<td>').text(item.Lokale));
+        row.append($('<td>').text(item.Status ? 'Mødt' : 'Ikke mødt'));
+        row.append($('<td>').text(item.Tidspunkt));
+        tableBody.append(row);
+      });
     },
-    classB: {
-        students: [
-            {name: "Sofie Petersen", lokale: "201"},
-            {name: "Jonas Hansen", lokale: "201"},
-            {name: "Freja Mikkelsen", lokale: "201"},
-            {name: "Oliver Nielsen", lokale: "201"}
-        ],
-        attendance: {
-            "2024-05-21": {
-                "Sofie Petersen": {status: "ikkemødt", time: "", lokale: "201"},
-                "Jonas Hansen": {status: "mødt", time: "08:10", lokale: "201"},
-                "Freja Mikkelsen": {status: "mødt", time: "08:12", lokale: "201"},
-                "Oliver Nielsen": {status: "ikkemødt", time: "", lokale: "201"}
-            },
-            "2024-05-22": {
-                "Sofie Petersen": {status: "mødt", time: "08:15", lokale: "201"},
-                "Jonas Hansen": {status: "mødt", time: "08:05", lokale: "201"},
-                "Freja Mikkelsen": {status: "mødt", time: "08:12", lokale: "201"},
-                "Oliver Nielsen": {status: "ikkemødt", time: "", lokale: "201"}
-            }
-        }
+    error: function(xhr, status, error) {
+      console.error(error);
     }
-};
-
-// Funktion til at opdatere overskriften med den valgte studerendes navn
-function updateSelectedStudentHeader() {
-    const studentPicker = document.getElementById('studentPicker');
-    const selectedStudent = studentPicker.options[studentPicker.selectedIndex].text;
-    const header = document.querySelector('h2');
-    header.textContent = `Fremmødedetaljer for ${selectedStudent}`;
-}
+});
 
 // Funktion til at indlæse tilstedeværelse for valgt dato og klasse
 function loadTilstedeværelse(sort = false) {
-    const classPicker = document.getElementById('classPicker').value;
-    const date = document.getElementById('datePicker').value;
+    const classPicker = document.getElementById('VælgKlasse').value;
+    const date = document.getElementById('VælgDato').value;
     if (!date || !classPicker) return;
 
     const currentClass = classData[classPicker];
-    const tableBody = document.getElementById('attendanceBody');
+    const tableBody = document.getElementById('FremmødeBody');
     tableBody.innerHTML = '';
 
     // Opret en liste af studerendeposter med deres status
@@ -120,7 +86,7 @@ function loadTilstedeværelse(sort = false) {
     });
 
     // Opdater studerendevælgeren med studerendeerne fra den valgte klasse
-    const studentPicker = document.getElementById('studentPicker');
+    const studentPicker = document.getElementById('VælgStuderende');
     studentPicker.innerHTML = '<option value="">Vælg studerende</option>';
     currentClass.students.forEach(student => {
         const option = document.createElement('option');
@@ -154,12 +120,12 @@ function sortTilstedeværelse() {
 
 // Funktion til at indlæse fremmødedetaljer for valgt studerende
 function loadStudentAttendance() {
-    const classPicker = document.getElementById('classPicker').value;
-    const studentPicker = document.getElementById('studentPicker').value;
+    const classPicker = document.getElementById('VælgKlasse').value;
+    const studentPicker = document.getElementById('VælgStuderende').value;
     if (!studentPicker || !classPicker) return;
 
     const currentClass = classData[classPicker];
-    const tableBody = document.getElementById('attendanceBody');
+    const tableBody = document.getElementById('FremmødeBody');
     tableBody.innerHTML = '';
 
     // Find og vis fremmødedetaljer for den valgte studerende
@@ -201,9 +167,10 @@ function loadStudentAttendance() {
         }
     });
 }
+
 // Funktion til at opdatere kalenderdatoen
 function updateCalendarDate(change) {
-    const datePicker = document.getElementById('datePicker');
+    const datePicker = document.getElementById('VælgDato');
     let currentDate = new Date(datePicker.value);
     currentDate.setDate(currentDate.getDate() + change);
     datePicker.valueAsDate = currentDate;
@@ -218,3 +185,51 @@ document.getElementById("prevBtn").addEventListener("click", function() {
 document.getElementById("nextBtn").addEventListener("click", function() {
     updateCalendarDate(1);
 });
+
+// Foruddefinerede fremmødedata for forskellige klasser og datoer
+const classData = {
+    classA: {
+        students: [
+            {name: "Anna Hansen", lokale: "101"},
+            {name: "Peter Jensen", lokale: "101"},
+            {name: "Lise Sørensen", lokale: "101"},
+            {name: "Mads Nielsen", lokale: "101"}
+        ],
+        attendance: {
+            "2024-05-21": {
+                "Anna Hansen": {status: "mødt", time: "08:15", lokale: "101"},
+                "Peter Jensen": {status: "mødt", time: "08:17", lokale: "101"},
+                "Lise Sørensen": {status: "ikkemødt", time: "", lokale: "101"},
+                "Mads Nielsen": {status: "mødt", time: "08:20", lokale: "101"}
+            },
+            "2024-05-22": {
+                "Anna Hansen": {status: "mødt", time: "08:10", lokale: "101"},
+                "Peter Jensen": {status: "ikkemødt", time: "", lokale: "101"},
+                "Lise Sørensen": {status: "mødt", time: "08:30", lokale: "101"},
+                "Mads Nielsen": {status: "mødt", time: "08:25", lokale: "101"}
+            }
+        }
+    },
+    classB: {
+        students: [
+            {name: "Sofie Petersen", lokale: "201"},
+            {name: "Jonas Hansen", lokale: "201"},
+            {name: "Freja Mikkelsen", lokale: "201"},
+            {name: "Oliver Nielsen", lokale: "201"}
+        ],
+        attendance: {
+            "2024-05-21": {
+                "Sofie Petersen": {status: "ikkemødt", time: "", lokale: "201"},
+                "Jonas Hansen": {status: "mødt", time: "08:10", lokale: "201"},
+                "Freja Mikkelsen": {status: "mødt", time: "08:12", lokale: "201"},
+                "Oliver Nielsen": {status: "ikkemødt", time: "", lokale: "201"}
+            },
+            "2024-05-22": {
+                "Sofie Petersen": {status: "mødt", time: "08:15", lokale: "201"},
+                "Jonas Hansen": {status: "mødt", time: "08:05", lokale: "201"},
+                "Freja Mikkelsen": {status: "mødt", time: "08:12", lokale: "201"},
+                "Oliver Nielsen": {status: "ikkemødt", time: "", lokale: "201"}
+            }
+        }
+    }
+};

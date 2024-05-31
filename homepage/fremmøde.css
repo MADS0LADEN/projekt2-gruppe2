@@ -1,9 +1,10 @@
+/* id=FremmødeBody */
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
     background-color: #ecece7;
 }
-/* Tabellen */
+/* Tabellen id=FremmødeTabel */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -42,7 +43,7 @@ th {
     right: 20px;
 }
 /* Kalender */
-#calendar {
+#kalender {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
@@ -56,20 +57,20 @@ th {
     margin-right: 10px;
 }
 /* Vælg klasse */
-#classPicker {
+#VælgKlasse {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
     margin-top: 2px;
 } 
 /* Vælg studerende */
-#studentPicker {
+#VælgStuderende {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
     margin-top: 2px;
 }
 /* Selve kalenderen */
-#datePicker {
+#VælgDato {
     margin-left: 5px;
 }
