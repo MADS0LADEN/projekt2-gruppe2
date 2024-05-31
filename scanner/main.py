@@ -1,11 +1,13 @@
 import time
 from time import sleep
 
-import net
 import ubinascii
 from driver import MFRC522
 from machine import Pin, SoftSPI, unique_id
 from umqtt.simple import MQTTClient
+from wifi import WiFiManager
+
+wifi = WiFiManager()
 
 # Angiv MQTT-brokerens adresse
 mqtt_broker = "adjms.sof60.dk"  # Du skal muligvis ændre dette til den faktiske adresse på din broker
@@ -43,6 +45,10 @@ def read_backup():
 
 def send_mqtt_message(message):
     try:
+        # Connect to wifi
+        if not wifi.is_connected():
+            wifi.connect()        
+        
         # Opret forbindelse til MQTT-brokeren
         client = MQTTClient("esp32", mqtt_broker, port=mqtt_port)
         client.connect()
@@ -90,8 +96,6 @@ last_read_time = 0
 while True:
     try:
         (status, tag_type) = reader.request(reader.CARD_REQIDL)
-        if net.connected_to_wifi():
-            read_backup()
         if status == reader.OK:
             (status, raw_uid) = reader.anticoll()
             current_time = time.time()
@@ -123,8 +127,13 @@ while True:
                     else:
                         print("AUTH ERROR")
                         blink(yellow)
+                    
+                    if wifi.is_connected():
+                        read_backup()
                 else:
                     print("FAILED TO SELECT TAG")
                     blink(red)
     except KeyboardInterrupt:
         break
+
+
