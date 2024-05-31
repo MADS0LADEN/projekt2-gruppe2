@@ -1,1 +1,1 @@
-import main
+import main  # noqa: F401
