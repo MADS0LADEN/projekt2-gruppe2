@@ -6,7 +6,7 @@ mqtt_port = 1883
 
 # Angiv emnet og beskeden, du vil sende
 topic = "test"
-message = "Hello, MQTT!"
+message = "77:8c:24:63:bc,dc5475cb025c"
 
 # Send beskeden til MQTT-brokeren
 publish.single(topic, message, hostname=mqtt_broker, port=mqtt_port)

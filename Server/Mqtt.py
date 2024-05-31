@@ -11,8 +11,15 @@ class ModtageData:
         # Denne funktion udføres, når der modtages en besked fra brokeren
         def on_message(client, userdata, message):
             receivedData = message.payload.decode('utf-8')
-            self.dataSender.senddata(receivedData)
-            print(f"Modtaget besked på emne '{message.topic}': {str(message.payload.decode('utf-8'))}")
+            split_data = receivedData.split(",")
+    
+            if len(split_data) == 2:  # Kontrollerer om beskeden har det forventede format
+                card_id, device_id = split_data
+                # Send dataene til dataSender
+                self.dataSender.senddata(card_id, device_id)
+                print(f"Modtaget besked på emne '{message.topic}': Card ID: {card_id}, Device ID: {device_id}")
+            else:
+                print("Ugyldigt format for MQTT-beskeden.")
 
         # Opret en MQTT-klient og forbind til brokeren
         client = mqtt.Client()
@@ -38,9 +45,9 @@ class SendeData:
         )
         self.mycursor = self.mydb.cursor()
     
-    def senddata(self, data):
-        sql = "INSERT INTO Registreringer  (PersonID, KlasseID)  VALUES (%s, %s)"
-        val = (data, data)
+    def senddata(self,card_id, device_id):
+        sql = "INSERT INTO Registeringer  (KortID,DeviceID)  VALUES (%s, %s)"
+        val = (card_id, device_id)
         self.mycursor.execute(sql, val)
         self.mydb.commit()
         print(self.mycursor.rowcount, "record inserted.")
