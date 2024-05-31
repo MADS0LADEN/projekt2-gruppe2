@@ -61,7 +61,7 @@ body {
     box-shadow: 0 0 10px black;
 }
 
-#device_id, #placement {
+#device_id, #Navn, #HoldID, #Kode {
     font-size: 12px;
     padding: 3px;
     margin: 10px;
