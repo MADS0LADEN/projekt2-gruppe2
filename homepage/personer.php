@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Kode = $_SESSION['Kode'];
 
     // Opret forbindelse til databasen
-    $servername = "host.docker.internal";
+    $servername = "mariadb";
     $username = "root";
     $password_db = "Dboa24!!";
     $dbname = "Projekt2";
