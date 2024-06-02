@@ -1,10 +1,13 @@
+import time
 from time import sleep
 
-import net
 import ubinascii
 from driver import MFRC522
 from machine import Pin, SoftSPI, unique_id
 from umqtt.simple import MQTTClient
+from wifi import WiFiManager
+
+wifi = WiFiManager()
 
 # Angiv MQTT-brokerens adresse
 mqtt_broker = "adjms.sof60.dk"  # Du skal muligvis ændre dette til den faktiske adresse på din broker
@@ -42,6 +45,10 @@ def read_backup():
 
 def send_mqtt_message(message):
     try:
+        # Connect to wifi
+        if not wifi.is_connected():
+            wifi.connect()        
+        
         # Opret forbindelse til MQTT-brokeren
         client = MQTTClient("esp32", mqtt_broker, port=mqtt_port)
         client.connect()
@@ -85,14 +92,16 @@ print("Place Card In Front Of Device To Read Unique Address")
 print("")
 
 last_uid = None
+last_read_time = 0
 while True:
     try:
         (status, tag_type) = reader.request(reader.CARD_REQIDL)
-        if net.connected_to_wifi():
-            read_backup()
         if status == reader.OK:
             (status, raw_uid) = reader.anticoll()
-            if raw_uid == last_uid:
+            current_time = time.time()
+
+            # Check if the card read is the same as the last one and if 10 seconds have passed
+            if raw_uid == last_uid and (current_time - last_read_time) < 10:
                 continue
             if status == reader.OK:
                 print("New Card Detected")
@@ -110,15 +119,21 @@ while True:
                         message = f"{card_id},{device_id}"
                         print(message)
                         reader.stop_crypto1()
+                        last_uid = raw_uid
+                        last_read_time = current_time
+                        send_mqtt_message(message)
                         blink(green)
                         # Send kort-ID'en via MQTT
-                        send_mqtt_message(message)
                     else:
                         print("AUTH ERROR")
                         blink(yellow)
+                    
+                    if wifi.is_connected():
+                        read_backup()
                 else:
                     print("FAILED TO SELECT TAG")
                     blink(red)
-                last_uid = raw_uid
     except KeyboardInterrupt:
         break
+
+

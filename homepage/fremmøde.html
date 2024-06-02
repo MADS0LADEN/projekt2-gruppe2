@@ -4,37 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fremmøderegistrering på UCN</title>
-    <link rel="stylesheet" href="fremmøde.css">   
+    <link rel="stylesheet" href="fremmøde.css">
 
 </head>
 <body>
 
     <h1>Fremmøderegistrering på UCN</h1>
     
-    <!-- Tilføjet pile til navigation -->
-    <div id="calendar">
+    <div id="kalender">
       <button id="prevBtn">&lt;</button>
-      <label for="datePicker">Vælg dato:</label>
-      <input type="date" id="datePicker" onchange="loadTilstedeværelse()">
+      <label for="VælgDato">Vælg dato:</label>
+      <input type="date" id="VælgDato" onchange="loadTilstedeværelse()">
       <button id="nextBtn">&gt;</button>
     </div>
     
     <button onclick="sortTilstedeværelse()" class="button">Sortér efter mødt</button>
     
-    <label for="classPicker">Vælg klasse:</label>
-    <select id="classPicker" onchange="loadTilstedeværelse()">
+    <label for="VælgKlasse">Vælg klasse:</label>
+    <select id="VælgKlasse" onchange="loadTilstedeværelse()">
         <option value="">Vælg klasse</option>
-        <option value="classA">Klasse A</option>
-        <option value="classB">Klasse B</option>
+        <option value="HoldID"></option>
     </select>
 
-    <label for="studentPicker">Vælg studerende:</label>
-    <select id="studentPicker" onchange="loadStudentAttendance(); updateSelectedStudentHeader()">
+    <label for="VælgStuderende">Vælg studerende:</label>
+    <select id="VælgStuderende" onchange="loadStudentAttendance(); updateSelectedStudentHeader()">
       <option value="">Vælg studerende</option>
+      <option value="Navn"></option>
         <!-- studerendeerne vil blive tilføjet her af JavaScript -->
     </select>
 
-    <table id="attendanceTable">
+    <table id="FremmødeTabel">
         <thead>
             <tr>
                 <th>Dato</th>
@@ -44,7 +43,7 @@
                 <th>Tidspunkt</th>
             </tr>
         </thead>
-        <tbody id="attendanceBody">
+        <tbody id="FremmødeBody">
             <!-- Data vil blive tilføjet her af JavaScript -->
         </tbody>
     </table>

@@ -28,6 +28,8 @@ services:
     image: php:fpm-alpine
     volumes:
       - ./php:/var/www/html
+    expose:
+      - "9000"
   nginx:
     container_name: nginx
     image: nginx
