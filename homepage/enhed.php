@@ -4,6 +4,7 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Tjek om brugeren er logget ind
     if (!isset($_SESSION['user_id'])) {
+        // Hvis brugeren ikke er logget ind, vis en fejlmeddelelse
         echo "Brugeren er ikke logget ind.";
         exit();
     }
