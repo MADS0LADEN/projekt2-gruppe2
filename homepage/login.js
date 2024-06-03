@@ -6,15 +6,19 @@ $(document).ready(function(){
             type: "POST",
             url: "login.php",
             data: $("#loginForm").serialize(),
-            dataType: "json", // Forvent et JSON-svar
+            dataType: "json",
             success: function(response){
                 if (response.status === "success") {
-                    // Hvis det er en succes, omdiriger til den angivne side
                     window.location = response.redirect;
                 } else {
-                    // Ellers, vis fejlmeddelelsen
                     $("#message").html(response.message);
+                    $("#message").css("color", "white"); // Gør beskedfeltet hvidt
                 }
+            },
+            error: function(xhr, status, error){
+                console.error("An error occurred: " + status + " " + error);
+                $("#message").html("An error occurred: " + xhr.responseText);
+                $("#message").css("color", "white"); // Gør beskedfeltet hvidt
             }
         });
     });
