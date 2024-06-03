@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fremmøderegistrering på UCN</title>
-    <link rel="stylesheet" href="fremmøde.css">
-
+    <link rel="stylesheet" href="fremmoede.css">
 </head>
 <body>
 
     <h1>Fremmøderegistrering på UCN</h1>
     
-    <div id="kalender">
+    <div class="kalender">
       <button id="prevBtn">&lt;</button>
       <label for="VælgDato">Vælg dato:</label>
       <input type="date" id="VælgDato" onchange="loadTilstedeværelse()">
@@ -23,14 +22,11 @@
     <label for="VælgKlasse">Vælg klasse:</label>
     <select id="VælgKlasse" onchange="loadTilstedeværelse()">
         <option value="">Vælg klasse</option>
-        <option value="HoldID"></option>
     </select>
 
     <label for="VælgStuderende">Vælg studerende:</label>
     <select id="VælgStuderende" onchange="loadStudentAttendance(); updateSelectedStudentHeader()">
       <option value="">Vælg studerende</option>
-      <option value="Navn"></option>
-        <!-- studerendeerne vil blive tilføjet her af JavaScript -->
     </select>
 
     <table id="FremmødeTabel">
@@ -48,6 +44,6 @@
         </tbody>
     </table>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="fremmøde.js"></script> 
+    <script src="fremmoede.js"></script> 
 </body>
 </html>

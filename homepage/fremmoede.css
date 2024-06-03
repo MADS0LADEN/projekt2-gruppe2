@@ -43,7 +43,7 @@ th {
     right: 20px;
 }
 /* Kalender */
-#kalender {
+.kalender {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
