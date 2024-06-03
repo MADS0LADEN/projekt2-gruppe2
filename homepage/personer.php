@@ -2,9 +2,9 @@
 session_start();
 
 // Tjek om brugeren er logget ind
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['PersonID'])) {
     // Hvis brugeren ikke er logget ind, kan du omdirigere dem til login-siden eller vise en fejlmeddelelse
-    echo "Brugeren er ikke logget ind.";
+    header('Location: https://adjms.sof60.dk/login.php')
     exit(); // Afslut scriptet for at forhindre yderligere udførelse
 }
 
