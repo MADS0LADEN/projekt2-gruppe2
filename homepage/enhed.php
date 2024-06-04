@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
 
     // Opret forbindelse til databasen
-    $servername = "host.docker.internal";
+    $servername = "192.168.15.24";
     $username = "root";
     $password_db = "Dboa24!!";
     $dbname = "Projekt2";

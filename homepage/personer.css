@@ -16,6 +16,28 @@ body {
     background-position: center;
 }
 
+.tilbageKnap {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    display: block;
+    width: 100px; /* Juster efter behov */
+    height: 45px;
+    margin: 20px 0;
+    background: #bed6db;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 10px black;
+    cursor: pointer;
+    font-size: 16px;
+    color: black;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    line-height: 45px;
+    text-decoration: none;   
+}
+
 .logo {
     position: absolute;
     top: 1px;
