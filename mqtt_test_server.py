@@ -1,4 +1,5 @@
 import datetime
+import ssl
 
 import paho.mqtt.client as mqtt
 
@@ -26,8 +27,10 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.on_disconnect = on_disconnect
 
+client.tls_set(ca_certs="./Server/mosquitto/server.crt", cert_reqs=ssl.CERT_REQUIRED)
+
 # Connect to the MQTT broker
-client.connect("adjms.sof60.dk", 1883, 5)
+client.connect("adjms.sof60.dk", 8883, 5)
 
 # Start the MQTT client loop
 client.loop_forever()

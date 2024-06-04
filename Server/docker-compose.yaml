@@ -4,9 +4,11 @@ services:
     container_name: mosquitto
     image: eclipse-mosquitto
     ports:
-      - "1883:1883"
+      #- "1883:1883"
+      - "8883:8883"
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/:/etc/mosquitto/certs/
 
   nginx:
     build: ./nginx/
@@ -24,8 +26,6 @@ services:
       - "9000"
     volumes:
       - ./php_code/:/var/www/html/
-
-
 
   certbot:
     container_name: certbot
