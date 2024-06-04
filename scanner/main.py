@@ -4,14 +4,16 @@ from time import sleep
 import ubinascii
 from driver import MFRC522
 from machine import Pin, SoftSPI, unique_id
-from umqtt.simple import MQTTClient
+
+# from umqtt.simple import MQTTClient
+from umqtt.robust import MQTTClient
 from wifi import WiFiManager
 
 wifi = WiFiManager()
 
 # Angiv MQTT-brokerens adresse
 mqtt_broker = "adjms.sof60.dk"  # Du skal muligvis ændre dette til den faktiske adresse på din broker
-mqtt_port = 1883
+mqtt_port = 8883  # 1883
 
 # Angiv emnet, du vil sende kort-ID'en til
 topic = "test"
@@ -47,10 +49,10 @@ def send_mqtt_message(message):
     try:
         # Connect to wifi
         if not wifi.is_connected():
-            wifi.connect()        
-        
+            wifi.connect()
+
         # Opret forbindelse til MQTT-brokeren
-        client = MQTTClient("esp32", mqtt_broker, port=mqtt_port)
+        client = MQTTClient("esp32", mqtt_broker, port=mqtt_port, ssl=True)
         client.connect()
 
         # Send beskeden til MQTT-brokeren
@@ -127,7 +129,7 @@ while True:
                     else:
                         print("AUTH ERROR")
                         blink(yellow)
-                    
+
                     if wifi.is_connected():
                         read_backup()
                 else:
@@ -135,5 +137,3 @@ while True:
                     blink(red)
     except KeyboardInterrupt:
         break
-
-
