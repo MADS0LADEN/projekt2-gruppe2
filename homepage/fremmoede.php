@@ -24,11 +24,37 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         echo json_encode(["error" => "Connection failed: " . $conn->connect_error]);
         exit();
     }
+    
+    // SQL til at hente klasser
+    $sql_klasse = "SELECT HoldNavn FROM StudereRetninger";
+    $result_klasse = $conn->query($sql_klasse);
 
-    $sql = "SELECT Registreringer.Dato, Personer.Navn, Registreringer.Lokale, Registreringer.Status, DATE_FORMAT(Registreringer.Dato, '%H:%i') AS Tidspunkt
-            FROM Registreringer 
-            JOIN Personer_StudereRetninger ON Registreringer.PersonID = Personer_StudereRetninger.PersonID
-            JOIN Personer ON Personer_StudereRetninger.PersonID = Personer.PersonID";
+    if ($result_klasse->num_rows > 0) {
+    // Output data for hver række
+    while($row = $result_klasse->fetch_assoc()) {
+        echo "<option value='".$row["HoldNavn"]."'>".$row["HoldNavn"]."</option>";
+    }
+    } else {
+    echo "0 resultater";
+    }
+
+    // SQL til at hente studerende
+    $sql_studerende = "SELECT Navn FROM Personer JOIN Personer_StudereRetninger ON Personer.PersonID = Personer_StudereRetninger.PersonID";
+    $result_studerende = $conn->query($sql_studerende);
+
+    if ($result_studerende->num_rows > 0) {
+    // Output data for hver række
+    while($row = $result_studerende->fetch_assoc()) {
+        echo "<option value='".$row["Navn"]."'>".$row["Navn"]."</option>";
+    }
+    } else {
+    echo "0 resultater";
+    }
+
+    $sql = "SELECT Reg.Dato, Per.Navn, Dev.Lokale, Reg.Status, DATE_FORMAT(Reg.Dato, '%H:%i') AS Tidspunkt
+            FROM Registeringer Reg
+            JOIN Personer Per ON Reg.PersonID = Per.PersonID
+            JOIN Devices Dev ON Reg.DeviceID = Dev.DeviceID";
     
     $result = $conn->query($sql);
     
