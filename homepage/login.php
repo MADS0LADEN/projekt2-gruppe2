@@ -3,7 +3,7 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Håndter kun POST-anmodninger
-    if (isset($_POST['PersonID']) && isset($_POST['Kode'])) {
+    if (isset($_POST['PersonID'], $_POST['Kode'])) {
         $PersonID = $_POST['PersonID'];
         $Kode = $_POST['Kode'];
 
@@ -23,14 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit();
         }
 
-        $PersonID = $conn->real_escape_string($PersonID);
-        $Kode = $conn->real_escape_string($Kode);
         $hashed_Kode = hash('sha256', $Kode);
 
-        $sql = "SELECT * FROM Personer WHERE PersonID='$PersonID' AND Kode='$hashed_Kode'";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
+        $sql = "SELECT PersonID, Privilegier FROM Personer WHERE PersonID=? AND Kode=? LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $PersonID, $hashed_Kode);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows == 1) {
             $row = $result->fetch_assoc();
             $_SESSION['PersonID'] = $row['PersonID'];
             $_SESSION['Privilegier'] = $row['Privilegier'];

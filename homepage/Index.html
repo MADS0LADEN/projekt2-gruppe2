@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store" />
     <title>Login</title>
     <link rel="stylesheet" href="loginstyle.css">
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Opdateret CSP for at tillade indlæsning af jQuery fra CDN -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://code.jquery.com;">
+    
+    <!-- Inkluder jQuery fra CDN -->
+    <script src="js/jquery-1.12.4.min.js"></script>
+
+
+    <!-- Inkluder din login.js efter jQuery -->
     <script src="login.js"></script>
 </head>
 
@@ -26,7 +35,7 @@
             </div>
 
             <div class="inputBox">
-                <input type="password" name="Kode" placeholder="Password" required>
+                <input type="password" name="Kode" placeholder="Indtast adgangskode" required maxlength="20">
             </div>
             
             <button type="submit" class="btn">Login</button>

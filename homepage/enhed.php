@@ -4,6 +4,7 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Tjek om brugeren er logget ind
     if (!isset($_SESSION['user_id'])) {
+        // Hvis brugeren ikke er logget ind, vis en fejlmeddelelse
         echo "Brugeren er ikke logget ind.";
         exit();
     }
@@ -14,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
 
     // Opret forbindelse til databasen
-    $servername = "host.docker.internal";
+    $servername = "192.168.15.24";
     $username = "root";
     $password_db = "Dboa24!!";
     $dbname = "Projekt2";
