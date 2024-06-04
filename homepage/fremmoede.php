@@ -1,22 +1,23 @@
 <?php
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
+/*if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // Tjek om brugeren er logget ind
     if (!isset($_SESSION['user_id'])) {
         header('Content-Type: application/json');
         echo json_encode(["error" => "Brugeren er ikke logget ind."]);
         exit();
-    }
+    }*/
 
     // Opretter forbindelse til databasen
-    $servername = "192.168.15.24";
+    $servername = "adjms.sof60.dk";
     $username = "root";
     $password_db = "Dboa24!!";
     $dbname = "Projekt2";
+    $port = "3200";
 
     // Opret forbindelse
-    $conn = new mysqli($servername, $username, $password_db, $dbname);
+    $conn = new mysqli($servername, $username, $password_db, $dbname, $port);
 
     // Tjek forbindelsen
     if ($conn->connect_error) {
@@ -74,5 +75,5 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     
     header('Content-Type: application/json');
     echo json_encode($data);
-}
+
 ?>
