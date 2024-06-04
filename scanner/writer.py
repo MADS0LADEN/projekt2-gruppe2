@@ -36,11 +36,11 @@ def chunks(lst, n):
         yield pad_bytes(lst[i : i + n], n)
 
 
-data = b"Hello, World! i have a nice day today, pleaseauiwtdbaiuwdautdwuiyatbwdui taywdt aiuwdtb ayuwdtb yuaitdw uibyawtdb aibw d use me i like cake?#)/#!=()#!131846++-/*kkkkk"
+data = "æøå".encode("utf-8")
 data += b"\x00" * (16 - len(data))
 data_chunks = list(chunks(data, 16))
 
-# print(data_chunks, sep="\n")
+print(data_chunks, sep="\n")
 
 
 last_uid = None
