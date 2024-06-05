@@ -1,22 +1,23 @@
 <?php
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
+/*if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // Tjek om brugeren er logget ind
     if (!isset($_SESSION['user_id'])) {
         header('Content-Type: application/json');
         echo json_encode(["error" => "Brugeren er ikke logget ind."]);
         exit();
-    }
+    }*/
 
     // Opretter forbindelse til databasen
-    $servername = "192.168.15.24";
+    $servername = "adjms.sof60.dk";
     $username = "root";
     $password_db = "Dboa24!!";
     $dbname = "Projekt2";
+    $port = "3200";
 
     // Opret forbindelse
-    $conn = new mysqli($servername, $username, $password_db, $dbname);
+    $conn = new mysqli($servername, $username, $password_db, $dbname, $port);
 
     // Tjek forbindelsen
     if ($conn->connect_error) {
@@ -24,11 +25,37 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         echo json_encode(["error" => "Connection failed: " . $conn->connect_error]);
         exit();
     }
+    
+    // SQL til at hente klasser
+    $sql_klasse = "SELECT HoldNavn FROM StudereRetninger";
+    $result_klasse = $conn->query($sql_klasse);
 
-    $sql = "SELECT Registreringer.Dato, Personer.Navn, Registreringer.Lokale, Registreringer.Status, DATE_FORMAT(Registreringer.Dato, '%H:%i') AS Tidspunkt
-            FROM Registreringer 
-            JOIN Personer_StudereRetninger ON Registreringer.PersonID = Personer_StudereRetninger.PersonID
-            JOIN Personer ON Personer_StudereRetninger.PersonID = Personer.PersonID";
+    if ($result_klasse->num_rows > 0) {
+    // Output data for hver række
+    while($row = $result_klasse->fetch_assoc()) {
+        echo "<option value='".$row["HoldNavn"]."'>".$row["HoldNavn"]."</option>";
+    }
+    } else {
+    echo "0 resultater";
+    }
+
+    // SQL til at hente studerende
+    $sql_studerende = "SELECT Navn FROM Personer JOIN Personer_StudereRetninger ON Personer.PersonID = Personer_StudereRetninger.PersonID";
+    $result_studerende = $conn->query($sql_studerende);
+
+    if ($result_studerende->num_rows > 0) {
+    // Output data for hver række
+    while($row = $result_studerende->fetch_assoc()) {
+        echo "<option value='".$row["Navn"]."'>".$row["Navn"]."</option>";
+    }
+    } else {
+    echo "0 resultater";
+    }
+
+    $sql = "SELECT Reg.Dato, Per.Navn, Dev.Lokale, Reg.Status, DATE_FORMAT(Reg.Dato, '%H:%i') AS Tidspunkt
+            FROM Registeringer Reg
+            JOIN Personer Per ON Reg.PersonID = Per.PersonID
+            JOIN Devices Dev ON Reg.DeviceID = Dev.DeviceID";
     
     $result = $conn->query($sql);
     
@@ -48,5 +75,5 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     
     header('Content-Type: application/json');
     echo json_encode($data);
-}
+
 ?>
