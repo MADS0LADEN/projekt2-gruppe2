@@ -27,14 +27,12 @@
                 <input type="text" id="DeviceID" name="DeviceID"><br>
                 <label for="Lokale">Lokale:</label><br>
                 <input type="text" id="Lokale" name="Lokale"><br>
-                <button class="btn" id="saveBtn" onclick="saveDevice()">Gem</button>
+                <button type="button" class="btn" id="saveBtn">Gem</button> <!-- Ændret type til "button" for at forhindre formen i at blive sendt normalt -->
             </div>
         </form>
         
         <div id="message"></div>
     </div>    
-    </div>
     <script src="enhed.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </body>
 </html>

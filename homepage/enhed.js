@@ -1,3 +1,11 @@
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("saveBtn").addEventListener("click", function(event) {
+        event.preventDefault(); // Forhindrer standardform sendelse
+        console.log("Button clicked!"); // Midlertidig fejlfinding: Kontrollerer, om begivenhedshandleren udløses
+        saveDevice();
+    });
+});
+
 function saveDevice() {
     var DeviceID = document.getElementById("DeviceID").value;
     var Lokale = document.getElementById("Lokale").value;

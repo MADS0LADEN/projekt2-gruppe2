@@ -1,9 +1,17 @@
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("saveBtn").addEventListener("click", function(event) {
+        event.preventDefault(); // Forhindrer standardform sendelse
+        console.log("Button clicked!"); // Midlertidig fejlfinding: Kontrollerer, om begivenhedshandleren udløses
+        saveDevice();
+    });
+});
+
 function saveDevice() {
-    var DeviceID = document.getElementById("HoldID").value;
-    var Lokale = document.getElementById("HoldNavn").value;
+    var HoldID = document.getElementById("HoldID").value;
+    var HoldNavn = document.getElementById("HoldNavn").value;
 
     // Validér om nødvendige felter er udfyldt
-    if (DeviceID === '' || Lokale === '') {
+    if (HoldID === '' || HoldNavn === '') {
         document.getElementById("message").innerHTML = "Alle felter skal udfyldes";
         return;
     }
