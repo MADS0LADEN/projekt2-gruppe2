@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tilføj enhed</title>
-    <link rel="stylesheet" href="enhed.css">
+    <title>Tilføj Studie hold</title>
+    <link rel="stylesheet" href="studiehold.css">
 </head>
 <body>
 
@@ -17,16 +17,16 @@
     </div>
     <div class="box">
         <div class="overskrift">
-            <h1>Tilføj enhed:</h1>
+            <h1>Tilføj Studie hold:</h1>
         </div>
     
         
         <form id="myForm" autocomplete="off" autocapitalize="none">
             <div class="center-frame">
-                <label for="DeviceID">Enheds ID:</label><br>
-                <input type="text" id="DeviceID" name="DeviceID"><br>
-                <label for="Lokale">Lokale:</label><br>
-                <input type="text" id="Lokale" name="Lokale"><br>
+                <label for="HoldID">Hold ID:</label><br>
+                <input type="text" id="HoldID" name="HoldID"><br>
+                <label for="HoldNavn">Hold Navn:</label><br>
+                <input type="text" id="HoldNavn" name="HoldNavn"><br>
                 <button class="btn" id="saveBtn" onclick="saveDevice()">Gem</button>
             </div>
         </form>
@@ -34,7 +34,7 @@
         <div id="message"></div>
     </div>    
     </div>
-    <script src="enhed.js"></script>
+    <script src="studiehold.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </body>
 </html>

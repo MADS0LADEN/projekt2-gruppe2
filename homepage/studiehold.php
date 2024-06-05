@@ -10,8 +10,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Hent enhedsoplysninger fra POST-anmodningen
-    $DeviceID = $_POST['DeviceID'];
-    $Lokale = $_POST['Lokale'];
+    $device_id = $_POST['HoldID'];
+    $placement = $_POST['HoldNavn'];
     
 
     // Opret forbindelse til databasen
@@ -27,11 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Undgå SQL-injektion
-    $DeviceID = $conn->real_escape_string($DeviceID);
-    $Lokale = $conn->real_escape_string($Lokale);
+    $HoldID = $conn->real_escape_string($HoldID);
+    $HoldNavn = $conn->real_escape_string($HoldNavn);
 
     // Gem enhedsoplysninger i databasen
-    $sql = "INSERT INTO Devices (DeviceID, Lokale) VALUES ('$DeviceID', '$Lokale')";
+    $sql = "INSERT INTO StudereRetninger (HoldID, HoldNavn) VALUES ('$HoldID', '$HoldNavn')";
 
     if ($conn->query($sql) === TRUE) {
         echo "Enheden er blevet gemt.";

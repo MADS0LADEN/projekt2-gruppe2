@@ -1,6 +1,6 @@
 function saveDevice() {
-    var DeviceID = document.getElementById("DeviceID").value;
-    var Lokale = document.getElementById("Lokale").value;
+    var DeviceID = document.getElementById("HoldID").value;
+    var Lokale = document.getElementById("HoldNavn").value;
 
     // Validér om nødvendige felter er udfyldt
     if (DeviceID === '' || Lokale === '') {
@@ -10,7 +10,7 @@ function saveDevice() {
 
     // Lav en AJAX-anmodning til PHP-filen
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "enhed.php", true);
+    xhr.open("POST", "studiehold.php", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function () {
@@ -19,12 +19,12 @@ function saveDevice() {
             document.getElementById("message").innerHTML = xhr.responseText;
 
             // Refresher inputfelterne
-            document.getElementById("DeviceID").value = "";
-            document.getElementById("Lokale").value = "";
+            document.getElementById("HoldID").value = "";
+            document.getElementById("HoldNavn").value = "";
         }
     };
 
     // Send data til serveren
-    var data = "DeviceID=" + encodeURIComponent(DeviceID) + "&Lokale=" + encodeURIComponent(Lokale);
+    var data = "HoldID=" + encodeURIComponent(HoldID) + "&HoldNavn=" + encodeURIComponent(HoldNavn);
     xhr.send(data);
 }

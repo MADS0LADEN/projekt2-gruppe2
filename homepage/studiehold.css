@@ -83,7 +83,7 @@ body {
     box-shadow: 0 0 10px black;
 }
 
-#DeviceID, #Lokale {
+#HoldID, #HoldNavn {
     font-size: 12px;
     padding: 3px;
     margin: 10px;
