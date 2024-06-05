@@ -3,48 +3,58 @@ session_start();
 
 // Tjek om brugeren er logget ind
 if (!isset($_SESSION['PersonID'])) {
-    // Hvis brugeren ikke er logget ind, kan du omdirigere dem til login-siden eller vise en fejlmeddelelse
-    header('Location: https://adjms.sof60.dk/login.php')
-    exit(); // Afslut scriptet for at forhindre yderligere udførelse
+    header('Location: https://adjms.sof60.dk/login.php');
+    exit();
 }
+
+// Opret forbindelse til databasen
+$servername = "192.168.15.24";
+$username = "root";
+$password_db = "Dboa24!!";
+$dbname = "Projekt2";
+
+$conn = new mysqli($servername, $username, $password_db, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Håndter anmodninger
+header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Hent enhedsoplysninger fra POST-anmodningen
-    $ID = $_POST['ID'];
-    $Navn = $_POST['Navn'];
-    $HoldID = $_POST['HoldID'];
-    $Kode = $_SESSION['Kode'];
+    if (isset($_POST['PersonID'], $_POST['Navn'], $_POST['HoldID'], $_POST['Privilegier'], $_POST['Kode'])) {
+        $PersonID = $conn->real_escape_string($_POST['PersonID']);
+        $Navn = $conn->real_escape_string($_POST['Navn']);
+        $HoldID = $conn->real_escape_string($_POST['HoldID']);
+        $Privilegier = $conn->real_escape_string($_POST['Privilegier']);
+        $Kode = $conn->real_escape_string($_POST['Kode']);
 
-    // Opret forbindelse til databasen
-    $servername = "192.168.15.24";
-    $username = "root";
-    $password_db = "Dboa24!!";
-    $dbname = "Projekt2";
+        $sqlPerson = "INSERT INTO Personer (PersonID, Navn, Privilegier, Kode) VALUES ('$PersonID', '$Navn', '$Privilegier', '$Kode')";
+        $sqlStudereRetninger = "INSERT INTO Personer_StudereRetninger (PersonID, HoldID) VALUES ('$PersonID', '$HoldID')";
 
-    $conn = new mysqli($servername, $username, $password_db, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Undgå SQL-injektion
-    $ID = $conn->real_escape_string($ID);
-    $Navn = $conn->real_escape_string($Navn);
-    $HoldID = $conn->real_escape_string($HoldID);
-    $Kode = $conn->real_escape_string($Kode);
-
-    // Gem enhedsoplysninger i databasen
-    $sql = "INSERT INTO Personer (PersonID, Navn, Kode) VALUES ('$ID', '$Navn', '$Kode')";
-    $sql_hold = "INSERT INTO HoldID (HoldID) VALUES ('$HoldID')";
-
-    if ($conn->query($sql) === TRUE && $conn->query($sql_hold) === TRUE) {
-        echo "Enheden er blevet gemt.";
+        if ($conn->query($sqlPerson) === TRUE && $conn->query($sqlStudereRetninger) === TRUE) {
+            echo json_encode(["message" => "Personen er blevet gemt."]);
+        } else {
+            echo json_encode(["message" => "Fejl ved gemning af person: " . $conn->error]);
+        }
     } else {
-        echo "Fejl ved gemning af enhed: " . $conn->error;
+        echo json_encode(["message" => "Ufuldstændige oplysninger."]);
     }
+} elseif (isset($_GET['action']) && $_GET['action'] == 'getHoldID') {
+    $sql = "SELECT HoldID FROM StudereRetninger";
+    $result = $conn->query($sql);
 
-    $conn->close();
+    $holdIDs = array();
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $holdIDs[] = $row['HoldID'];
+        }
+    }
+    echo json_encode($holdIDs);
 } else {
-    echo "Ugyldig anmodning.";
+    echo json_encode(["message" => "Ugyldig anmodning."]);
 }
+
+$conn->close();
 ?>
