@@ -21,16 +21,27 @@
     
         <form id="myForm" autocomplete="off" autocapitalize="none">
             <div class="center-frame">
-                <label for="PersonID">ID:</label><br>
-                <input type="text" id="PersonID" name="PersonID"><br>
-                <label for="Navn">Navn:</label><br>
-                <input type="text" id="Navn" name="Navn"><br>
-                <label for="HoldID">HoldID:</label><br>
-                <select id="HoldID" name="HoldID"></select><br>
-                <label for="Privilegier">Underviser=0 Admin=1:</label><br>
-                <input type="text" id="Privilegier" name="Privilegier"><br>
-                <label for="Kode">Kode:</label><br>
-                <input type="text" id="Kode" name="Kode"><br>
+                
+                <div class="inputbox">
+                <input type="text" id="PersonID" placeholder="PersonID"><br>
+                </div>
+
+                <div class="inputbox">
+                <input type="text" id="Navn" placeholder="Navn"><br>
+                </div>
+                
+                <select id="HoldID" name="HoldID">
+                    <option value="">Vælg Hold ID</option>
+                </select><br>
+                <select id="Privilegier" name="Privilegier">
+                    <option value="">Vælg privilegium</option>
+                    <option value="2">Studerende</option>
+                    <option value="0">Underviser</option>
+                    <option value="1">Administrator</option>
+                </select><br>
+                <div class="inputbox">
+                    <input type="password" id="Kode" placeholder="Indtast adgangskode"> <!-- Brug type="password" for at skjule kodeordet -->
+                </div>
                 <button type="button" class="btn" id="saveBtn">Gem</button>
             </div>
         </form>
