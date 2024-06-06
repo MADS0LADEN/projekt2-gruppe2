@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 echo json_encode(["status" => "error", "message" => "Elever kan ikke logge ind!"]);
                 exit();
             } else if ($_SESSION['Privilegier'] == 0) {
-                echo json_encode(["status" => "success", "redirect" => "fremmøde.html"]);
+                echo json_encode(["status" => "success", "redirect" => "fremmoede.html"]);
                 exit();
             } else if ($_SESSION['Privilegier'] == 1) {
                 echo json_encode(["status" => "success", "redirect" => "adminpage.html"]);
