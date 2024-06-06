@@ -24,8 +24,8 @@
     </select>
 
     <label for="VælgStuderende">Vælg studerende:</label>
-    <select id="VælgStuderende">
-      <option value="">Vælg studerende</option>
+    <select id="VælgStuderende" onchange=>
+        <option value="">Vælg studerende</option>
     </select>
 
     <table id="FremmødeTabel">
@@ -39,7 +39,6 @@
             </tr>
         </thead>
         <tbody id="FremmødeBody">
-            <!-- Data vil blive tilføjet her af JavaScript -->
         </tbody>
     </table>
     <script src="js/jquery-1.12.4.min.js"></script>

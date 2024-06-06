@@ -1,337 +1,244 @@
 $(document).ready(function() {
-    $.ajax({
-        url: 'fremmoede.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {
-            const classData = response.data;
-            const klasser = response.klasser;
-            const studerende = response.studerende;
+    // Skjul tabellen ved start
+    $('#FremmødeBody').hide();
 
-            // Populer klasse dropdown
-            let klasseSelect = $('#VælgKlasse');
-            klasser.forEach(klasse => {
-                klasseSelect.append(`<option value="${klasse.HoldID}">${klasse.HoldNavn}</option>`);
-            });
-
-            // Populer studerende dropdown
-            let studerendeSelect = $('#VælgStuderende');
-            studerende.forEach(student => {
-                studerendeSelect.append(`<option value="${student.PersonID}">${student.Navn}</option>`);
-            });
-
-            // Opdater tilstedeværelse tabel
-            function updateTilstedeværelse(records) {
-                let tbody = $('#FremmødeBody');
-                tbody.empty();
-                records.forEach(record => {
-                    var row = $('<tr>');
-                    row.append($('<td>').text(record.Dato));
-                    row.append($('<td>').text(record.Navn));
-                    row.append($('<td>').text(record.Lokale));
-                    row.append($('<td>').text(record.Status ? 'Mødt' : 'Ikke mødt'));
-                    row.append($('<td>').text(record.Tidspunkt));
-                    tbody.append(row);
-                });
-            }
-
-            // Initial load
-            updateTilstedeværelse(classData);
-
-            // Funktion til at indlæse tilstedeværelse for valgt dato og klasse
-            function loadTilstedeværelse(sort = false) {
-                const VælgKlasse = $('#VælgKlasse').val();
-                const VælgDato = $('#VælgDato').val();
-                let filteredData = classData;
-
-                if (VælgDato) {
-                    filteredData = filteredData.filter(item => item.Dato.startsWith(VælgDato));
-                }
-                if (VælgKlasse) {
-                    filteredData = filteredData.filter(item => item.HoldID == VælgKlasse);
-                }
-                // Sortér studerendeposter så de mødt kommer først, hvis "sort" er sand
-                if (sort) {
-                    filteredData.sort((a, b) => {
-                        if (a.Status === 'mødt' && b.Status !== 'mødt') return -1;
-                        if (a.Status !== 'mødt' && b.Status === 'mødt') return 1;
-                        return 0;
-                    });
-                }
-
-                updateTilstedeværelse(filteredData);
-            }
-
-            // Funktion til at sortere tilstedeværelseslisten
-            function sortTilstedeværelse() {
-                loadTilstedeværelse(true); // Genindlæs og sorter
-            }
-            // Funktion til at indlæse fremmødedetaljer for valgt studerende
-            function loadStudentAttendance() {
-                const VælgKlasse = document.getElementById('VælgKlasse').value;
-                const VælgStuderende = document.getElementById('VælgStuderende').value;
-                if (!VælgStuderende || !VælgKlasse) return;
-
-                const currentClass = classData[VælgKlasse];
-                const tableBody = document.getElementById('FremmødeBody');
-                tableBody.innerHTML = '';
-            }
-                        
-            // Bind events
-            $('#VælgDato').on('change', loadTilstedeværelse);
-            $('#VælgKlasse').on('change', loadTilstedeværelse);
-            $('#VælgStuderende').on('change', function() { loadStudentAttendance(); });
-            $('#sortBtn').on('click', sortTilstedeværelse);
-            $('#prevBtn').on('click', function() { updateCalendarDate(-1); });
-            $('#nextBtn').on('click', function() { updateCalendarDate(1); });
-
-            // Funktion til at opdatere kalenderdatoen
-            function updateCalendarDate(change) {
-                const VælgDato = $('#VælgDato')[0];
-                let currentDate = new Date(VælgDato.value);
-                currentDate.setDate(currentDate.getDate() + change);
-                VælgDato.valueAsDate = currentDate;
-                loadTilstedeværelse();
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(error);
+    // Event listeners for dropdown-menuerne og datoen
+    $('#VælgKlasse').on('change', function() {
+        var valgtKlasse = $(this).val();
+        if (valgtKlasse !== '') {
+            $('#FremmødeBody').show(); // Vis tabellen kun hvis en klasse er valgt
+            fetchData();
+        } else {
+            $('#FremmødeBody').hide(); // Skjul tabellen hvis ingen klasse er valgt
         }
     });
-});
 
+    $('#VælgStuderende').on('change', function() {
+        loadStudentAttendance();
+        sortTilstedeværelse();
+    });
 
+    $('#VælgDato').on('change', function() {
+        fetchData(); // Kald fetchData, når datoen ændres
+    });
 
+    // Initial kald for at hente data
+    fetchData();
 
+    // Funktion til at hente data og opdatere tabellen
+    function fetchData() {
+        var valgtDato = $('#VælgDato').val();
+        var valgtKlasse = $('#VælgKlasse').val();
+        var valgtStuderende = $('#VælgStuderende').val();
 
+        // Tilføj en betingelse for at kontrollere, om en studerende er valgt
+        var dataToSend = { dato: valgtDato, klasse: valgtKlasse };
+        if (valgtStuderende !== '') {
+            dataToSend.studerende = valgtStuderende;
+        }
 
+        $.ajax({
+            url: 'fremmoede.php',
+            method: 'GET',
+            dataType: 'json',
+            data: dataToSend,
+            success: function(data) {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
 
+                // Opdater dropdown-menuen for klasser
+                var selectKlasse = $('#VælgKlasse');
+                selectKlasse.empty();
+                selectKlasse.append('<option value="">Alle klasser</option>');
+                $.each(data.klasser, function(index, klasse) {
+                    selectKlasse.append('<option value="' + klasse + '">' + klasse + '</option>');
+                });
 
-/*
-// Funktion til at indlæse tilstedeværelse for valgt dato og klasse
-function loadTilstedeværelse(sort = false) {
-    const VælgKlasse = document.getElementById('VælgKlasse').value;
-    const VælgDato = document.getElementById('VælgDato').value;
-    if (!VælgDato || !VælgKlasse) return;
+                // Genvælg den tidligere valgte klasse
+                selectKlasse.val(valgtKlasse);
 
-    const currentClass = classData[VælgKlasse];
-    const tableBody = document.getElementById('FremmødeBody');
-    tableBody.innerHTML = '';
-    
-    // Sortér studerendeposter så de mødt kommer først, hvis "sort" er sand
-    if (sort) {
-        studentRecords.sort((a, b) => {
-            if (a.Status === 'mødt' && b.Status !== 'mødt') return -1;
-            if (a.Status !== 'mødt' && b.Status === 'mødt') return 1;
-            return 0;
+                // Opdater dropdown-menuen for studerende kun hvis en klasse er valgt
+                var selectStuderende = $('#VælgStuderende');
+                selectStuderende.empty();
+                selectStuderende.append('<option value="">Alle studerende</option>');
+                if (valgtKlasse !== '') {
+                    $.each(data.studerende, function(index, studerende) {
+                        selectStuderende.append('<option value="' + studerende + '">' + studerende + '</option>');
+                    });
+                }
+                // Genvælg den tidligere valgte studerende
+                selectStuderende.val(valgtStuderende);
+
+                // Vis registeringsdata i tabellen
+                visRegisteringsdata(data.registeringer);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('Fejl ved hentning af data: ' + textStatus);
+            }
         });
     }
 
-    // Opret rækker i tabellen for hver studerende
-    studentRecords.forEach(record => {
-        const row = document.createElement('tr');
-        
-        // Opret celle til dato
-        const Dato = document.createElement('td');
-        Dato.textContent = record.Dato;
-        row.appendChild(Dato);
-        
-        // Opret celle til studerendenavn
-        const Navn = document.createElement('td');
-        Navn.textContent = record.Navn;
-        row.appendChild(Navn);
-        
-        // Opret celle til lokale nummer
-        const Lokale = document.createElement('td');
-        Lokale.textContent = record.Lokale;
-        row.appendChild(Lokale);
-        
-        // Opret celle til status (enten mødt eller ikkemødt)
-        const Status = document.createElement('td');
-        const statusIcon = document.createElement('span');
-        statusIcon.className = 'status';
-        statusIcon.innerHTML = record.Status === 'mødt' ? '&#x2714;' : '&#x2716;'; // Flueben eller kryds
-        statusIcon.className = record.Status === 'mødt' ? 'status mødt' : 'status ikkemødt';
-        statusIcon.onclick = () => updateTilstedeværelse(VælgKlasse, VælgDato, record.Navn, record.Status === 'mødt' ? 'ikkemødt' : 'mødt');
-        Status.appendChild(statusIcon);
-        row.appendChild(Status);
-        
-        // Opret celle til tidspunkt
-        const Tidspunkt = document.createElement('td');
-        Tidspunkt.textContent = record.Tidspunkt;
-        row.appendChild(Tidspunkt);
-        tableBody.appendChild(row); });
+    // Funktion til at opdatere tabellen med registreringsdata
+    function visRegisteringsdata(registeringer) {
+        var tbody = $('#FremmødeBody');
+        tbody.empty();
 
-        // Opdater studerendevælgeren med studerendeerne fra den valgte klasse
-        const VælgStuderende = document.getElementById('VælgStuderende');
-        VælgStuderende.innerHTML = '<option value="">Vælg studerende</option>';
-        currentClass.students.forEach(student => {
-        const option = document.createElement('option');
-        option.value = student.Navn;
-        option.textContent = student.Navn;
-        VælgStuderende.appendChild(option);
-    });
-}
-
-// Funktion til at indlæse fremmødedetaljer for valgt studerende
-function loadStudentAttendance() {
-    const VælgKlasse = document.getElementById('VælgKlasse').value;
-    const VælgStuderende = document.getElementById('VælgStuderende').value;
-    if (!VælgStuderende || !VælgKlasse) return;
-
-    const currentClass = classData[VælgKlasse];
-    const tableBody = document.getElementById('FremmødeBody');
-    tableBody.innerHTML = '';
-}
-
-
-
-// Funktion til at sortere tilstedeværelseslisten
-function sortTilstedeværelse() {
-    loadTilstedeværelse(true); // Genindlæs og sorter
-}
-
-// Funktion til at indlæse fremmødedetaljer for valgt studerende
-function loadStudentAttendance() {
-    const VælgKlasse = document.getElementById('VælgKlasse').value;
-    const VælgStuderende = document.getElementById('VælgStuderende').value;
-    if (!VælgStuderende || !VælgKlasse) return;
-
-    const currentClass = classData[VælgKlasse];
-    const tableBody = document.getElementById('FremmødeBody');
-    tableBody.innerHTML = '';
-}
-
-/*
-document.getElementById('VælgDato').addEventListener('change', loadTilstedeværelse);
-
-document.getElementById('VælgKlasse').addEventListener('change', loadTilstedeværelse);
-
-document.getElementById('VælgStuderende').addEventListener('change', function() {loadStudentAttendance();updateSelectedStudentHeader();
-});
-
-// Funktion til at indlæse tilstedeværelse for valgt dato og klasse
-function loadTilstedeværelse(sort = false) {
-    const VælgKlasse = document.getElementById('VælgKlasse').value;
-    const VælgDato = document.getElementById('VælgDato').value;
-    if (!VælgDato || !VælgKlasse) return;
-
-    const currentClass = classData[VælgKlasse];
-    const tableBody = document.getElementById('FremmødeBody');
-    tableBody.innerHTML = '';
-    
-    // Sortér studerendeposter så de mødt kommer først, hvis "sort" er sand
-    if (sort) {
-        studentRecords.sort((a, b) => {
-            if (a.Status === 'mødt' && b.Status !== 'mødt') return -1;
-            if (a.Status !== 'mødt' && b.Status === 'mødt') return 1;
-            return 0;
+        $.each(registeringer, function(index, row) {
+            var tr = $('<tr>');
+            tr.append('<td>' + row.Dato + '</td>');
+            tr.append('<td>' + row.Navn + '</td>');
+            tr.append('<td>' + row.Lokale + '</td>');
+            tr.append('<td>' + row.Status + '</td>');
+            tr.append('<td>' + row.Tidspunkt + '</td>');
+            tbody.append(tr);
         });
     }
 
-    studentRecords.forEach(record => {
-        var row = $('<tr>');
-        row.append($('<td>').text(record.Dato));
-        row.append($('<td>').text(record.Navn));
-        row.append($('<td>').text(record.Lokale));
-        row.append($('<td>').text(record.Status));
-        row.append($('<td>').text(record.Tidspunkt));
-        tbody.append(row);
+    // Event listeners for pilene
+    $('#prevBtn').on('click', function() {
+        skiftDato(-1); // Skift til forrige dag
     });
 
-    // Opret rækker i tabellen for hver studerende
-    studentRecords.forEach(record => {
-        const row = document.createElement('tr');
-        
-        // Opret celle til dato
-        const Dato = document.createElement('td');
-        Dato.textContent = record.Dato;
-        row.appendChild(Dato);
-        
-        // Opret celle til studerendenavn
-        const Navn = document.createElement('td');
-        Navn.textContent = record.Navn;
-        row.appendChild(Navn);
-        
-        // Opret celle til lokale nummer
-        const Lokale = document.createElement('td');
-        Lokale.textContent = record.Lokale;
-        row.appendChild(Lokale);
-        
-        // Opret celle til status (enten mødt eller ikkemødt)
-        const Status = document.createElement('td');
-        const statusIcon = document.createElement('span');
-        statusIcon.className = 'status';
-        statusIcon.innerHTML = record.Status === 'mødt' ? '&#x2714;' : '&#x2716;'; // Flueben eller kryds
-        statusIcon.className = record.Status === 'mødt' ? 'status mødt' : 'status ikkemødt';
-        statusIcon.onclick = () => updateTilstedeværelse(VælgKlasse, VælgDato, record.Navn, record.Status === 'mødt' ? 'ikkemødt' : 'mødt');
-        Status.appendChild(statusIcon);
-        row.appendChild(Status);
-        
-        // Opret celle til tidspunkt
-        const Tidspunkt = document.createElement('td');
-        Tidspunkt.textContent = record.Tidspunkt;
-        row.appendChild(Tidspunkt);
-        tableBody.appendChild(row); });
+    $('#nextBtn').on('click', function() {
+        skiftDato(1); // Skift til næste dag
+    });
+
+    function skiftDato(ændring) {
+        var valgtDato = new Date($('#VælgDato').val());
+        valgtDato.setDate(valgtDato.getDate() + ændring);
+        $('#VælgDato').val(valgtDato.toISOString().split('T')[0]);
+        fetchData(); // Kald fetchData, når datoen ændres
+    }
+
+    // Funktion til at indlæse tilstedeværelse for valgt dato og klasse
+    function loadTilstedeværelse(sort = false) {
+        const VælgKlasse = $('#VælgKlasse').val();
+        const Dato = $('#VælgDato').val();
+        if (!Dato || !VælgKlasse) return;
+
+        const currentClass = valgtKlasse[VælgKlasse]; // valgte klasse fra data
+        const tableBody = $('#FremmødeBody');
+        tableBody.empty();
+
+        // Opret en liste af studerendeposter med deres status
+        let studentRecords = currentClass.students.map(student => ({
+            date: Dato,
+            name: student.Navn,
+            lokale: student.Lokale,
+            status: currentClass.attendance[Dato] ? currentClass.attendance[Dato][student.Navn].Status : "ikkemødt",
+            time: currentClass.attendance[Dato] ? currentClass.attendance[Dato][student.Navn].Tidspunkt : ""
+        }));
+
+        // Sortér studerendeposter så de mødt kommer først, hvis sort er sand
+        if (sort) {
+            studentRecords.sort((a, b) => {
+                if (a.status === 'mødt' && b.status !== 'mødt') return -1;
+                if (a.status !== 'mødt' && b.status === 'mødt') return 1;
+                return 0;
+            });
+        }
+
+        // Opret rækker i tabellen for hver studerende
+        studentRecords.forEach(record => {
+            const row = $('<tr>');
+
+            // Opret celle til dato
+            const DatoCell = $('<td>').text(record.date);
+            row.append(DatoCell);
+
+            // Opret celle til studerendenavn
+            const NavnCell = $('<td>').text(record.name);
+            row.append(NavnCell);
+
+            // Opret celle til lokale nummer
+            const LokaleCell = $('<td>').text(record.lokale);
+            row.append(LokaleCell);
+
+            // Opret celle til status (enten mødt eller ikkemødt)
+            const StatusCell = $('<td>');
+            const statusIcon = $('<span>').addClass('status').html(record.status === 'mødt' ? '&#x2714;' : '&#x2716;');
+            statusIcon.addClass(record.status === 'mødt' ? 'status mødt' : 'status ikkemødt');
+            statusIcon.click(() => updateTilstedeværelse(VælgKlasse, Dato, record.name, record.status === 'mødt' ? 'ikkemødt' : 'mødt'));
+            StatusCell.append(statusIcon);
+            row.append(StatusCell);
+
+            // Opret celle til tidspunkt
+            const TidspunktCell = $('<td>').text(record.time);
+            row.append(TidspunktCell);
+
+            tableBody.append(row);
+        });
 
         // Opdater studerendevælgeren med studerendeerne fra den valgte klasse
-        const VælgStuderende = document.getElementById('VælgStuderende');
-        VælgStuderende.innerHTML = '<option value="">Vælg studerende</option>';
+        const VælgStuderende = $('#VælgStuderende');
+        VælgStuderende.empty();
+        VælgStuderende.append('<option value="">Vælg studerende</option>');
         currentClass.students.forEach(student => {
-        const option = document.createElement('option');
-        option.value = student.Navn;
-        option.textContent = student.Navn;
-        VælgStuderende.appendChild(option);
-    });
-}
+            const option = $('<option>').val(student.Navn).text(student.Navn);
+            VælgStuderende.append(option);
+        });
+    }
 
-// Funktion til at opdatere tilstedeværelse for en studerende i en bestemt klasse og dato
-function updateTilstedeværelse(HoldID, Dato, Navn, Status) {
-    const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-    if (!classData[HoldID].attendance[Dato]) {
-        classData[HoldID].attendance[Dato] = {};}
-    classData[HoldID].attendance[Dato][Navn] = {
-        status: Status,
-        time: Status === 'mødt' ? currentTime : "",
-        lokale: classData[HoldID].students.find(s => s.Navn === Navn).Lokale 
-    };
+    // Funktion til at opdatere tilstedeværelse for en studerende i en bestemt klasse og dato
+    function updateTilstedeværelse(klasse, Dato, studerende, Status) {
+        const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        if (!valgtKlasse[klasse].attendance[Dato]) {
+            valgtKlasse[klasse].attendance[Dato] = {};
+        }
+        valgtKlasse[klasse].attendance[Dato][studerende] = {
+            status: Status,
+            time: Status === 'mødt' ? currentTime : "",
+            lokale: valgtKlasse[klasse].students.find(s => s.Navn === studerende).Lokale
+        };
 
-    // Genindlæs tilstedeværelsesdata for at opdatere visuelle indikatorer
-    loadTilstedeværelse();
-    console.log(classData); // For debugging purposes
-}
+        // Genindlæs tilstedeværelsesdata for at opdatere visuelle indikatorer
+        loadTilstedeværelse();
+        console.log(valgtKlasse); // For debugging purposes
+    }
 
-// Funktion til at sortere tilstedeværelseslisten
-function sortTilstedeværelse() {
-    loadTilstedeværelse(true); // Genindlæs og sorter
-}
+    // Funktion til at sortere tilstedeværelseslisten
+    function sortTilstedeværelse() {
+        loadTilstedeværelse(true); // Genindlæs og sorter
+    }
 
-// Funktion til at indlæse fremmødedetaljer for valgt studerende
-function loadStudentAttendance() {
-    const VælgKlasse = document.getElementById('VælgKlasse').value;
-    const VælgStuderende = document.getElementById('VælgStuderende').value;
-    if (!VælgStuderende || !VælgKlasse) return;
+    // Funktion til at indlæse fremmødedetaljer for valgt studerende
+    function loadStudentAttendance() {
+        const VælgKlasse = $('#VælgKlasse').val();
+        const VælgStuderende = $('#VælgStuderende').val();
 
-    const currentClass = classData[VælgKlasse];
-    const tableBody = document.getElementById('FremmødeBody');
-    tableBody.innerHTML = '';
-}
+        if (!VælgKlasse || !VælgStuderende) return;
 
-// Tilføj eventlisteners til pilene for at ændre dato
-document.getElementById("prevBtn").addEventListener("click", function() {
-    updateCalendarDate(-1);
+        const currentClass = VælgKlasse[VælgKlasse];
+
+        const tableBody = $('#FremmødeBody');
+        tableBody.empty();
+
+        for (let dato in currentClass.attendance) {
+            const attendance = currentClass.attendance[dato][VælgStuderende];
+            if (attendance) {
+                const row = $('<tr>');
+
+                const DatoCell = $('<td>').text(dato);
+                row.append(DatoCell);
+
+                const NavnCell = $('<td>').text(VælgStuderende);
+                row.append(NavnCell);
+
+                const LokaleCell = $('<td>').text(attendance.Lokale);
+                row.append(LokaleCell);
+
+                const statusIcon = $('<span>').addClass('status').html(attendance.Status === 'mødt' ? '&#x2714;' : '&#x2716;');
+                statusIcon.addClass(attendance.Status === 'mødt' ? 'mødt' : 'ikkemødt');
+                const StatusCell = $('<td>').append(statusIcon);
+                row.append(StatusCell);
+
+                const TidspunktCell = $('<td>').text(attendance.Tidspunkt);
+                row.append(TidspunktCell);
+
+                tableBody.append(row);
+            }
+        }
+    }
 });
-
-document.getElementById("nextBtn").addEventListener("click", function() {
-    updateCalendarDate(1);
-});
-
-// Funktion til at opdatere kalenderdatoen
-function updateCalendarDate(change) {
-    const VælgDato = document.getElementById('VælgDato');
-    let currentDate = new Date(VælgDato.value);
-    currentDate.setDate(currentDate.getDate() + change);
-    VælgDato.valueAsDate = currentDate;
-    loadTilstedeværelse();
-}
-*/

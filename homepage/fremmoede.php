@@ -1,54 +1,57 @@
 <?php
-session_start();
-
 $servername = "192.168.15.24";
 $username = "root";
-$password_db = "Dboa24!!";
+$password = "Dboa24!!";
 $dbname = "Projekt2";
 
-$conn = new mysqli($servername, $username, $password_db, $dbname);
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+    // Hent klasser fra StudereRetninger
+    $sqlKlasse = "SELECT HoldNavn FROM StudereRetninger";
+    $stmtKlasse = $conn->prepare($sqlKlasse);
+    $stmtKlasse->execute();
+    $klasser = $stmtKlasse->fetchAll(PDO::FETCH_COLUMN);
 
-// Hent klasser
-$sql_klasse = "SELECT HoldID, HoldNavn FROM StudereRetninger";
-$result_klasse = $conn->query($sql_klasse);
-$klasser = [];
-if ($result_klasse->num_rows > 0) {
-    while ($row = $result_klasse->fetch_assoc()) {
-        $klasser[] = $row;
+    // Hent studerende baseret på den valgte klasse, hvis en klasse er valgt
+    $whereClause = '';
+    if(isset($_GET['klasse']) && !empty($_GET['klasse'])) {
+        $klasse = $_GET['klasse'];
+        $whereClause = " WHERE sr.HoldNavn = '$klasse'";
     }
-}
 
-// Hent studerende
-$sql_studerende = "SELECT Personer.PersonID, Personer.Navn 
-                   FROM Personer 
-                   JOIN Personer_StudereRetninger ON Personer.PersonID = Personer_StudereRetninger.PersonID";
-$result_studerende = $conn->query($sql_studerende);
-$studerende = [];
-if ($result_studerende->num_rows > 0) {
-    while ($row = $result_studerende->fetch_assoc()) {
-        $studerende[] = $row;
-    }
-}
+    // Hent studerende fra Personer baseret på klasse (hvis en klasse er valgt)
+    $sqlStuderende = "SELECT p.Navn FROM Personer p 
+                      INNER JOIN Personer_StudereRetninger psr ON p.PersonID = psr.PersonID
+                      INNER JOIN StudereRetninger sr ON psr.HoldID = sr.HoldID" . $whereClause;
+    $stmtStuderende = $conn->prepare($sqlStuderende);
+    $stmtStuderende->execute();
+    $studerende = $stmtStuderende->fetchAll(PDO::FETCH_COLUMN);
 
-// Hent registreringer
-$sql = "SELECT Reg.Dato, Per.Navn, Dev.Lokale, Reg.Status, DATE_FORMAT(Reg.Dato, '%H:%i') AS Tidspunkt
-                FROM Registeringer Reg
-                JOIN Personer Per ON Reg.PersonID = Per.PersonID
-                JOIN Devices Dev ON Reg.DeviceID = Dev.DeviceID
-                WHERE Reg.PersonID = ?";
-$result = $conn->query($sql);
-$data = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
-}
-$conn->close();
+    // Hent registeringer kun for den valgte klasse
+    $sqlRegisteringer = "
+    SELECT 
+        DATE(r.Dato) AS Dato,
+        p.Navn,
+        r.Status,
+        TIME(r.Dato) AS Tidspunkt,
+        d.Lokale
+    FROM Registeringer r
+    JOIN Kort k ON r.KortID = k.KortID
+    JOIN Personer p ON k.PersonID = p.PersonID
+    JOIN Devices d ON r.DeviceID = d.DeviceID
+    JOIN Personer_StudereRetninger psr ON p.PersonID = psr.PersonID
+    JOIN StudereRetninger sr ON psr.HoldID = sr.HoldID
+    " . $whereClause . "
+    ORDER BY STR_TO_DATE(Dato, '%Y-%m-%d') DESC, STR_TO_DATE(Tidspunkt, '%H:%i:%s') DESC, Navn ASC";
+    $stmtRegisteringer = $conn->prepare($sqlRegisteringer);
+    $stmtRegisteringer->execute();
+    $registeringer = $stmtRegisteringer->fetchAll(PDO::FETCH_ASSOC);
 
-header('Content-Type: application/json');
-echo json_encode(['data' => $data, 'klasser' => $klasser, 'studerende' => $studerende]);
+    // Returner data som JSON
+    echo json_encode(["klasser" => $klasser, "studerende" => $studerende, "registeringer" => $registeringer]);
+} catch(PDOException $e) {
+    echo json_encode(["error" => "Fejl ved hentning: " . $e->getMessage()]);
+}
 ?>
