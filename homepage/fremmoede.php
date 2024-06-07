@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $servername = "192.168.15.24";
 $username = "root";
 $password = "Dboa24!!";
@@ -34,7 +36,11 @@ try {
 
     // Hent registeringer kun for den valgte klasse og studerende
     $whereClause = '';
-    if(isset($_GET['Dato']) && isset($_GET['klasse']) && !empty($_GET['Dato']) && !empty($_GET['klasse'])) {
+    if(isset($_GET['klasse']) && !empty($_GET['klasse']) && isset($_GET['studerende']) && !empty($_GET['studerende'])) {
+        $klasse = $_GET['klasse'];
+        $studerende = $_GET['studerende'];
+        $whereClause = " WHERE sr.HoldNavn = '$klasse' AND p.Navn = '$studerende'";
+    } elseif(isset($_GET['Dato']) && !empty($_GET['Dato']) && isset($_GET['klasse']) && !empty($_GET['klasse'])) {
         $valgtDato = $_GET['Dato'];
         $klasse = $_GET['klasse'];
         $whereClause = " WHERE DATE(r.Dato) = '$valgtDato' AND sr.HoldNavn = '$klasse'";
@@ -63,7 +69,11 @@ try {
     $registeringer = $stmtRegisteringer->fetchAll(PDO::FETCH_ASSOC);
 
     // Returner data som JSON
-    echo json_encode(["klasser" => $klasser, "studerende" => $studerende, "registeringer" => $registeringer]);
+    echo json_encode([
+        "klasser" => $klasser,
+        "studerende" => $studerende,
+        "registeringer" => $registeringer,
+    ]);
 } catch(PDOException $e) {
     echo json_encode(["error" => "Fejl ved hentning: " . $e->getMessage()]);
 }

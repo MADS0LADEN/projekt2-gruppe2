@@ -38,8 +38,8 @@ th {
 }
 /* Knappen til Sortér efter mødt */
 .button {
-    position:absolute; 
-    top: 180px; 
+    position:fixed; 
+    top: 200px; 
     right: 20px;
 }
 /* Kalender */
