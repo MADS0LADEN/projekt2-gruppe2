@@ -4,6 +4,9 @@ $username = "root";
 $password = "Dboa24!!";
 $dbname = "Projekt2";
 
+// Håndter den valgte dato
+$valgtDato = isset($_GET['Dato']) ? $_GET['Dato'] : null;
+
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -29,7 +32,17 @@ try {
     $stmtStuderende->execute();
     $studerende = $stmtStuderende->fetchAll(PDO::FETCH_COLUMN);
 
-    // Hent registeringer kun for den valgte klasse
+    // Hent registeringer kun for den valgte klasse og studerende
+    $whereClause = '';
+    if(isset($_GET['Dato']) && isset($_GET['klasse']) && !empty($_GET['Dato']) && !empty($_GET['klasse'])) {
+        $valgtDato = $_GET['Dato'];
+        $klasse = $_GET['klasse'];
+        $whereClause = " WHERE DATE(r.Dato) = '$valgtDato' AND sr.HoldNavn = '$klasse'";
+    } elseif(isset($_GET['klasse']) && !empty($_GET['klasse'])) {
+        $klasse = $_GET['klasse'];
+        $whereClause = " WHERE sr.HoldNavn = '$klasse'";
+    }
+
     $sqlRegisteringer = "
     SELECT 
         DATE(r.Dato) AS Dato,

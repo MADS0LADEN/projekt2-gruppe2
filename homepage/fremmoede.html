@@ -15,6 +15,10 @@
       <input type="date" id="VælgDato">
       <button id="nextBtn">&gt;</button>
     </div>
+
+    <!-- Tilbageknap -->
+    <button id="tilbageBtn" class="button">Tilbage til admin-siden</button>
+
     
     <button id="sortBtn" class="button">Sortér efter mødt</button>
     
@@ -24,7 +28,7 @@
     </select>
 
     <label for="VælgStuderende">Vælg studerende:</label>
-    <select id="VælgStuderende" onchange=>
+    <select id="VælgStuderende">
         <option value="">Vælg studerende</option>
     </select>
 
@@ -39,6 +43,7 @@
             </tr>
         </thead>
         <tbody id="FremmødeBody">
+            <!-- Data vil blive tilføjet her af JavaScript -->
         </tbody>
     </table>
     <script src="js/jquery-1.12.4.min.js"></script>

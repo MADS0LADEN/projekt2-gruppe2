@@ -74,3 +74,9 @@ th {
 #VælgDato {
     margin-left: 5px;
 }
+/* Knappen til Sortér efter mødt */
+#tilbageBtn {
+    position:fixed; 
+    top: 50px; 
+    right: 20px;
+}
