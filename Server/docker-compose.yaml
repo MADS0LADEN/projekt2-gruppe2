@@ -1,57 +1,55 @@
 version: "3.8"
 services:
   mosquitto:
-    container_name: mosquitto
-    image: eclipse-mosquitto
+    container_name: mosquitto  # Navngiver containeren til 'mosquitto'
+    image: eclipse-mosquitto  # Bruger 'eclipse-mosquitto' som billede
     ports:
-      - "1883:1883"
+      - "1883:1883"  # Mapper port 1883 fra containeren til port 1883 på værten
     volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf  # Monterer konfigurationsfilen ind i containeren
 
   nginx:
-    build: ./nginx/
+    build: ./nginx/  # Bygger 'nginx' containeren fra Dockerfile i './nginx/' mappen
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:80"  # Mapper HTTP port
+      - "443:443"  # Mapper HTTPS port
     volumes:
-      - ./php_code/:/var/www/html/
-      - ./certs:/etc/nginx/ssl
+      - ./php_code/:/var/www/html/  # Monterer PHP-koden ind i nginx serverens rodmappe
+      - ./certs:/etc/nginx/ssl  # Monterer SSL-certifikater ind i nginx
 
   php:
     build:
-      context: ./php_code/
+      context: ./php_code/  # Bygger 'php' containeren fra Dockerfile i './php_code/' mappen
     expose:
-      - "9000"
+      - "9000"  # Eksponerer port 9000 inde i netværket (ikke til værten)
     volumes:
-      - ./php_code/:/var/www/html/
-
-
+      - ./php_code/:/var/www/html/  # Monterer PHP-koden ind i containeren
 
   certbot:
-    container_name: certbot
-    image: certbot/certbot
+    container_name: certbot  # Navngiver containeren til 'certbot'
+    image: certbot/certbot  # Bruger 'certbot/certbot' som billede
     volumes:
-      - ./certs:/etc/letsencrypt
-      - ./php:/var/www/html
-    command: certonly --webroot --webroot-path=/var/www/html --register-unsafely-without-email --agree-tos --no-eff-email --force-renewal -d adjms.sof60.dk
+      - ./certs:/etc/letsencrypt  # Monterer mappen for certifikater ind i containeren
+      - ./php:/var/www/html  # Monterer PHP-koden ind, brugt af Certbot til at validere ejerskab
+    command: certonly --webroot --webroot-path=/var/www/html --register-unsafely-without-email --agree-tos --no-eff-email --force-renewal -d adjms.sof60.dk  # Kører Certbot med specifikke flag
     depends_on:
-      - nginx
+      - nginx  # Certbot afhænger af, at nginx er startet
 
   mariadb:
-    container_name: mariadb
-    image: mariadb
+    container_name: mariadb  # Navngiver containeren til 'mariadb'
+    image: mariadb  # Bruger 'mariadb' som billede
     ports:
-      - "3306:3306"
+      - "3306:3306"  # Mapper MariaDB porten
     environment:
-      - MYSQL_ROOT_PASSWORD=Dboa24!!
+      - MYSQL_ROOT_PASSWORD=Dboa24!!  # Sætter root adgangskoden for MariaDB
     volumes:
-      - /C/DB:/var/lib/mysql
+      - /C/DB:/var/lib/mysql  # Monterer databasemappen ind i containeren
 
   phpmyadmin:
-    container_name: phpmyadmin
-    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin  # Navngiver containeren til 'phpmyadmin'
+    image: phpmyadmin/phpmyadmin  # Bruger 'phpmyadmin/phpmyadmin' som billede
     ports:
-      - "8081:80"
+      - "8081:80"  # Mapper port 8081 på værten til port 80 i containeren
     environment:
-      - PMA_ARBITRARY=0
-      - PMA_HOST=mariadb
+      - PMA_ARBITRARY=0  # Tillader ikke vilkårlig serverforbindelse
+      - PMA_HOST=mariadb  # Angiver MariaDB containeren som database server
