@@ -47,10 +47,10 @@ def send_mqtt_message(message):
     try:
         # Connect to wifi
         if not wifi.is_connected():
-            wifi.connect()        
-        
+            wifi.connect()
+
         # Opret forbindelse til MQTT-brokeren
-        client = MQTTClient("esp32", mqtt_broker, port=mqtt_port)
+        client = MQTTClient("LogUnit", mqtt_broker, port=mqtt_port)
         client.connect()
 
         # Send beskeden til MQTT-brokeren
@@ -127,7 +127,7 @@ while True:
                     else:
                         print("AUTH ERROR")
                         blink(yellow)
-                    
+
                     if wifi.is_connected():
                         read_backup()
                 else:
@@ -135,5 +135,3 @@ while True:
                     blink(red)
     except KeyboardInterrupt:
         break
-
-
